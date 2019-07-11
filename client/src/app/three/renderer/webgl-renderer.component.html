@@ -1,0 +1,8 @@
+<canvas #canvas>
+</canvas>
+<div id="overlay" *ngIf="progressMap.size>0">
+    <div id="spinner">
+        <fa-icon [icon]="['fas', 'spinner']" spin="true" size="5x"></fa-icon>
+      <p *ngFor="let id of progressMap.keys()">{{id}}: {{progressMap.get(id)*100}}%</p>
+    </div>
+</div>

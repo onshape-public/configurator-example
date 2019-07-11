@@ -1,0 +1,13 @@
+<div class="form-row d-flex">
+  <div class="input-group border-danger">
+    <div class="input-group-prepend">
+      <span class="input-group-text">{{parameter.name}}</span>
+    </div>
+    <ng-select [items]="parameter.options"
+               [ngClass]="{'changed': changed}"
+             bindLabel="optionName"
+             [(ngModel)]="option"
+             bindValue="option" (change)="optionChange($event)">
+    </ng-select>
+  </div>
+</div>

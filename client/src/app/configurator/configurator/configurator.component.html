@@ -1,0 +1,65 @@
+<three-toolframe *ngIf="configuredAssembly">
+  <three-toolbar placement="Bottom">
+    <app-camera-controls [button]="false" [zoomToFitInitial]="false"></app-camera-controls>
+  </three-toolbar>
+  <three-toolbar placement="Left">
+    <div class="form-row mb-1" *ngFor="let parameter of configurator.parameters; let i = index">
+      <ng-container [ngSwitch]="parameter.type">
+        <app-parameter-quantity *ngSwitchCase="'quantity'"
+                                [parameter]="quantityParameter(parameter)"
+                                [parameterValue]="configuration.values[i]"
+                                [appliedParameterValue]="appliedConfiguration.values[i]"
+                                (parameterValueChange)="parameterValueChange($event)"></app-parameter-quantity>
+        <app-parameter-enum *ngSwitchCase="'enum'"
+                            [parameter]="enumParameter(parameter)"
+                            [parameterValue]="configuration.values[i]"
+                            [appliedParameterValue]="appliedConfiguration.values[i]"
+                            (parameterValueChange)="parameterValueChange($event)"></app-parameter-enum>
+      </ng-container>
+    </div>
+    <div class="form-row mb-1 mt-2">
+      <div class="btn-group w-100">
+        <button [disabled]="isDefault || inProgress" class="btn btn-primary w-25" (click)="home()"><fa-icon [icon]="['fas', 'home']"></fa-icon></button>
+        <button [disabled]="!changed || inProgress" class="btn btn-primary w-25" (click)="undo()"><fa-icon [icon]="['fas', 'undo']"></fa-icon></button>
+        <button [disabled]="!changed || inProgress" class="btn btn-primary w-50" (click)="updateAssembly()">
+          <fa-icon *ngIf="inProgress || progress < 100" [spin]="true" [icon]="['fas', 'sync-alt']"></fa-icon>
+          <fa-icon *ngIf="!(inProgress || progress < 100)" [icon]="['fas', 'play-circle']"></fa-icon> Apply</button>
+      </div>
+    </div>
+    <app-progress></app-progress>
+  </three-toolbar>
+  <three-toolbar placement="Right">
+    <!-- meta data -->
+  </three-toolbar>
+  <three-toolbar placement="Top">
+    <app-export-button [documentId]="documentId"
+                       [wvmType]="wvmType"
+                       [wvmId]="wvmId"
+                       [elementId]="elementId"
+                       [configuration]="configuration"></app-export-button>
+    <app-drawing-button [documentId]="documentId"
+                        [wvmType]="wvmType"
+                        [wvmId]="wvmId"
+                        [elementId]="elementId"
+                        [drawingElements]="drawingElements"
+                        [configuration]="configuration"></app-drawing-button>
+    <app-onshape-button [documentId]="documentId"
+                        [wvmType]="wvmType"
+                        [wvmId]="wvmId"
+                        [elementId]="elementId"></app-onshape-button>
+  </three-toolbar>
+  <three-webgl-renderer>
+
+    <!--        <three-perspective-camera [fov]=60 [near]=1 [far]=1100 positionX=20 positionY=50 positionZ=50></three-perspective-camera>-->
+    <three-orthographic-camera [fov]=6 positionX=2.5 positionY=2.5 positionZ=2.5></three-orthographic-camera>
+
+    <three-scene [rotateX]="halfpi">
+      <three-axes-helper size=2></three-axes-helper>
+
+      <three-point-light color="white" intensity="0.9" distance="1000" translateX=50 translateY=50 translateZ=50></three-point-light>
+      <three-point-light color="#FAFAFA" intensity="0.5" distance="1000" translateX=-50 translateY=50 translateZ=20></three-point-light>
+
+      <app-configured-assembly [configuredAssembly]="configuredAssembly"></app-configured-assembly>
+    </three-scene>
+  </three-webgl-renderer>
+</three-toolframe>

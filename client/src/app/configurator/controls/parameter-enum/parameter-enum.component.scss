@@ -1,0 +1,9 @@
+
+
+.ng-select.changed {
+  .ng-select-container {
+    .ng-value-container {
+      color: var(--success);
+    }
+  }
+}

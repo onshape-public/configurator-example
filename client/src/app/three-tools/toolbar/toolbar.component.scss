@@ -1,0 +1,28 @@
+.three-tools-toolbar {
+  pointer-events: auto;
+  z-index: 100;
+}
+
+.toolbar-left {
+  position: fixed;
+  left: 5vw;
+  top: 10vh;
+}
+
+.toolbar-right {
+  position: fixed;
+  right: 5vw;
+  bottom: 10vh;
+}
+
+.toolbar-bottom {
+  position: fixed;
+  bottom: 5vh;
+  left: 10vw;
+}
+
+.toolbar-top {
+  position: fixed;
+  top: 5vh;
+  right: 10vw;
+}

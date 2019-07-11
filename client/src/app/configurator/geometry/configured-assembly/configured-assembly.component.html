@@ -1,0 +1,2 @@
+<app-sub-assembly [subassembly]="subassembly" *ngFor="let subassembly of configuredAssembly.subAssemblies; trackBy: trackElement"></app-sub-assembly>
+<app-configured-part [part]="part" *ngFor="let part of configuredAssembly.parts; trackBy: trackElement"></app-configured-part>

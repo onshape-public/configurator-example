@@ -1,0 +1,8 @@
+<div class="form-row mb-1">
+  <ngb-progressbar type="success"
+                   class="w-100"
+                 [value]="progress"
+                 [striped]="progress<100"
+                 [animated]="progress<100"><i>{{progress | number:'1.0-0' }}%</i>
+  </ngb-progressbar>
+</div>

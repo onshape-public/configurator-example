@@ -1,0 +1,14 @@
+<div class="form-row ">
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <span class="input-group-text">{{parameter.name}}</span>
+    </div>
+    <input type="number" [ngClass]="{'changed': changed}" [(ngModel)]="value" (ngModelChange)="updateValue($event)">
+    <div class="input-group-append">
+      <span class="input-group-text">{{parameter.units}}</span>
+    </div>
+  </div>
+</div>
+<div class="form-row mb-1">
+  <ng5-slider [manualRefresh]="sliderRefresh" [(value)]="value" (valueChange)="updateValue($event)" [options]="options"></ng5-slider>
+</div>

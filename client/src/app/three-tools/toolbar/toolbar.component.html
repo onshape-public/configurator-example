@@ -1,0 +1,5 @@
+<div class="three-tools-toolbar btn-toolbar" [ngClass]="{'toolbar-left': placement=='Left', 'toolbar-right': placement=='Right', 'toolbar-bottom': placement=='Bottom', 'toolbar-top': placement=='Top'}" role="toolbar">
+  <div class="btn-group btn-group-justified" [ngClass]="{'btn-group': placement=='Top' || placement=='Bottom', 'flex-column': placement=='Left' || placement=='Right'}" role="group">
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div ngbDropdown class="d-inline-block">
+  <button class="btn btn-outline-primary" id="dropdownExport" ngbDropdownToggle [disabled]="inProgress">
+    <fa-icon *ngIf="!inProgress" [icon]="['fas', 'download']"></fa-icon>
+    <fa-icon *ngIf="inProgress" [spin]="true" [icon]="['fas', 'sync-alt']"></fa-icon>
+  </button>
+  <div ngbDropdownMenu aria-labelledby="dropdownExport">
+    <button ngbDropdownItem *ngFor="let format of formats" (click)="export(format)">{{format.name | titlecase}}</button>
+  </div>
+</div>

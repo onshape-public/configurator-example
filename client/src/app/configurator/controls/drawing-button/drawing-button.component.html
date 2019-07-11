@@ -1,0 +1,6 @@
+<div ngbDropdown class="ml-1 d-inline-block">
+  <button class="btn btn-outline-primary" id="dropdownDrawing" ngbDropdownToggle><fa-icon [icon]="['fas', 'drafting-compass']"></fa-icon></button>
+  <div ngbDropdownMenu aria-labelledby="dropdownDrawing">
+    <button ngbDropdownItem *ngFor="let drawing of drawings" (click)="open(drawing)">{{drawing.name}}</button>
+  </div>
+</div>
