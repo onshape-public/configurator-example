@@ -34,7 +34,7 @@
                 <executions>
                     <execution>
                         <id>client</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>                        
                         </goals>                        
