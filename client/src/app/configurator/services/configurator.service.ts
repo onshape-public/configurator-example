@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable, Input} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../../configurator/target/typescript-generator/configurator';
+import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../typescript-generator/configurator';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import { STLLoader } from '../../three/js/STLLoader';

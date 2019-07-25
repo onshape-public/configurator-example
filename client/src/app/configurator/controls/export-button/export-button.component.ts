@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { ExportFormat, WVM, Configuration } from '../../../../../../configurator/target/typescript-generator/configurator';
+import { ExportFormat, WVM, Configuration } from '../../../../typescript-generator/configurator';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ConfiguratorService} from '../../services/configurator.service';
 import { saveAs } from 'file-saver/dist/FileSaver';

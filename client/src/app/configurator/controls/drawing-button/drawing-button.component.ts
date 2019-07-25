@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { ConfigurableDrawing, AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../../../configurator/target/typescript-generator/configurator';
+import { ConfigurableDrawing, AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../typescript-generator/configurator';
 import {HttpClient} from '@angular/common/http';
 import {ConfiguratorService} from '../../services/configurator.service';
 

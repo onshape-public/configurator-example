@@ -17,20 +17,25 @@ node_modules/
 
 # compiled output
 /dist
+/client/dist
 /tmp
 /out-tsc
+/client/src/typescript-generator
+/configurator/bin
 
 # dependencies
 /node_modules
 
 # IDEs and editors
-/.idea
+.idea
 .project
 .classpath
 .c9/
 *.launch
 .settings/
 *.sublime-workspace
+*.iml
+.factorypath
 
 # IDE - VSCode
 .vscode/*

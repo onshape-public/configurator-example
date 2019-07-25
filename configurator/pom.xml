@@ -36,8 +36,8 @@
                         <id>client</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>exec</goal>                        
-                        </goals>                        
+                            <goal>exec</goal>
+                        </goals>
                         <configuration>
                             <executable>npm</executable>
                             <arguments>
@@ -52,8 +52,8 @@
                         <id>docker</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>exec</goal>                        
-                        </goals>                        
+                            <goal>exec</goal>
+                        </goals>
                         <configuration>
                             <executable>docker</executable>
                             <arguments>
@@ -139,6 +139,7 @@
                         <class>com.onshape.configurator.model.ExportFormat</class>
                         <class>com.onshape.configurator.model.ParameterValue</class>
                     </classes>
+                    <outputFile>../client/src/typescript-generator/configurator.ts</outputFile>
                     <outputFileType>implementationFile</outputFileType>
                     <outputKind>module</outputKind>
                     <mapClasses>asClasses</mapClasses>

@@ -1,5 +1,5 @@
 import {Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../../../configurator/target/typescript-generator/configurator';
+import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../typescript-generator/configurator';
 import {AbstractObject3D} from '../../../three/objects/abstract-object-3d';
 import * as THREE from 'three';
 

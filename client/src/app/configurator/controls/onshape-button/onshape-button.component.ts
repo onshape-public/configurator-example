@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { WVM} from '../../../../../../configurator/target/typescript-generator/configurator';
+import { WVM} from '../../../../typescript-generator/configurator';
 
 @Component({
   selector: 'app-onshape-button',
