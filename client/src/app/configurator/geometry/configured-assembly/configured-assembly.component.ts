@@ -1,7 +1,7 @@
 import {Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../../typescript-generator/configurator';
 import {Observable} from 'rxjs';
-import {AbstractObject3D} from '../../../three/objects/abstract-object-3d';
+import {AbstractObject3D} from 'atft/';
 import * as THREE from 'three';
 
 @Component({

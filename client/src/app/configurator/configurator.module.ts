@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ThreeToolsModule } from '../three-tools/three-tools.module';
-import { ThreeModule } from '../three/three.module';
 import { ConfiguratorComponent } from './configurator/configurator.component';
 import { ConfiguredPartDirective } from './geometry/configured-part.directive';
 import { ConfiguredAssemblyComponent } from './geometry/configured-assembly/configured-assembly.component';
@@ -46,7 +45,6 @@ import { OnshapeButtonComponent } from './controls/onshape-button/onshape-button
   imports: [
     CommonModule,
     ThreeToolsModule,
-    ThreeModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

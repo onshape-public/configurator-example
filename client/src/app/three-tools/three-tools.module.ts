@@ -29,7 +29,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { ToolframeComponent } from './toolframe/toolframe.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { ThreeModule } from '../three/three.module';
 import { OrbitControlsComponent } from './orbit-controls/orbit-controls.component';
 import { ExplodeComponent } from './explode/explode.component';
 import { CameraControlsComponent } from './camera-controls/camera-controls.component';
@@ -54,7 +53,6 @@ import { Ng5SliderModule } from 'ng5-slider';
     CommonModule,
     NgbModule,
     FontAwesomeModule,
-    ThreeModule,
     Ng5SliderModule
   ]
 })

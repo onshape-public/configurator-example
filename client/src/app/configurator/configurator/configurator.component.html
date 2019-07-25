@@ -56,8 +56,8 @@
     <three-scene [rotateX]="halfpi">
       <three-axes-helper size=2></three-axes-helper>
 
-      <three-point-light color="white" intensity="0.9" distance="1000" translateX=50 translateY=50 translateZ=50></three-point-light>
-      <three-point-light color="#FAFAFA" intensity="0.5" distance="1000" translateX=-50 translateY=50 translateZ=20></three-point-light>
+      <three-directional-light color="white" intensity="0.9" distance="1000" translateX=50 translateY=50 translateZ=50></three-directional-light>
+      <three-ambient-light color="white" intensity="0.2" distance="1000" translateX=50 translateY=50 translateZ=50></three-ambient-light>
 
       <app-configured-assembly [configuredAssembly]="configuredAssembly"></app-configured-assembly>
     </three-scene>
