@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "downlevelIteration": true,
     "importHelpers": true,
-    "module": "esnext",
+    "module": "es2015",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -18,14 +18,6 @@
     "lib": [
       "es2017",
       "dom"
-    ],
-    "paths": {
-      "atft": [
-        "dist/atft"
-      ],
-      "atft/*": [
-        "dist/atft/*"
-      ]
-    }
+    ]
   }
 }

@@ -11,7 +11,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { AppComponent } from './app.component';
 import { ConfiguratorModule } from './configurator/configurator.module';
 import { ThreeToolsModule } from './three-tools/three-tools.module';
-import { AtftModule } from 'atft/src/lib/atft.module';
+import { ThreeModule } from './three/three.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,8 @@ import { AtftModule } from 'atft/src/lib/atft.module';
     ConfiguratorModule,
     NgbModule,
     FontAwesomeModule,
-    ThreeToolsModule
+    ThreeToolsModule,
+    ThreeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
