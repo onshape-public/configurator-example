@@ -140,8 +140,6 @@ export class OrbitControlsComponent extends AbstractTool implements OnChanges, O
 
         // prevent camera from zooming out far enough to create far plane cutoff
         this.controls.maxDistance = cameraToFarEdge * 2;
-        // ERROR HERE
-        this.controls.saveState();
 
       } else {
 
