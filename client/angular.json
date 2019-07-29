@@ -120,21 +120,6 @@
           }
         }
       }
-    },
-    "atft": {
-      "root": "node_modules/atft",
-      "sourceRoot": "node_modules/atft/src",
-      "projectType": "library",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "node_modules/atft/tsconfig.lib.json",
-            "project": "node_modules/atft/ng-package.json"
-          }
-        }
-      }
     }
   },
   "defaultProject": "onshape-configurator"
