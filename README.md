@@ -49,18 +49,13 @@ npm run start
 cd ..
 ```
 
+# Docker
 
-# How to build
-
-The following will build a Docker image called "configurator":
-
-
+First build a Docker image called "configurator":
 ```
 cd configurator
 mvn package -DskipTests=true
 ```
-
-# How to run: container
 
 The following will run the configurator at http://localhost:8080:
 

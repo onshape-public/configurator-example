@@ -32,7 +32,7 @@ import { WebGLRendererComponent } from '../../three/renderer/webgl-renderer.comp
 })
 export class ToolframeComponent implements OnInit, AfterContentInit {
 
-  @ContentChild(WebGLRendererComponent) rendererComponent: WebGLRendererComponent;
+  @ContentChild(WebGLRendererComponent, {static: true}) rendererComponent: WebGLRendererComponent;
   @ContentChildren(ToolbarComponent) toolbarComponents: QueryList<ToolbarComponent>;
 
   constructor() { }
