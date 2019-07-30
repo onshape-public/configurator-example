@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {AbstractDocumentElement, Appearance, Configuration, ConfigurationParameter, ConfigurationParameterEnum, ConfigurationParameterQuantity, Configurator, ConfiguredAssembly, ConfiguredPart, EnumOption, ParameterValue, SubAssembly, WVM} from '../../../typescript-generator/configurator';
 import {Observable} from 'rxjs';
-import { ConfiguratorService } from '../services/configurator.service';
+import {ConfiguratorService } from '../services/configurator.service';
 import * as _ from 'lodash';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-configurator',
@@ -32,11 +33,30 @@ export class ConfiguratorComponent implements OnInit, OnChanges {
   isDefault: boolean;
   changed: boolean;
 
-  constructor(private configuratorService: ConfiguratorService) {
+  constructor(private configuratorService: ConfiguratorService, private route: ActivatedRoute) {
     this.configuredAssembly = null;
   }
 
   ngOnInit() {
+
+    if (this.route.snapshot.paramMap.get('did')) {
+      this.documentId = this.route.snapshot.paramMap.get('did');
+      switch (this.route.snapshot.paramMap.get('wvm')) {
+        case 'w':
+          this.wvmType = 'Workspace';
+          break;
+        case 'v':
+          this.wvmType = 'Version';
+          break;
+        case 'm':
+          this.wvmType = 'Microversion';
+          break;
+      }
+      this.wvmType = this.wvmType as WVM;
+      this.wvmId = this.route.snapshot.paramMap.get('wvmid');
+      this.elementId = this.route.snapshot.paramMap.get('eid');
+    }
+
     console.log(this.drawingElements);
     this.inProgress = false;
     this.progress = 100;

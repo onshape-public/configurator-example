@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { ConfiguratorModule } from './configurator/configurator.module';
 import { ThreeToolsModule } from './three-tools/three-tools.module';
 import { ThreeModule } from './three/three.module';
+import { AppRoutingModule } from './app-routing/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ThreeModule } from './three/three.module';
     NgbModule,
     FontAwesomeModule,
     ThreeToolsModule,
-    ThreeModule
+    ThreeModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
