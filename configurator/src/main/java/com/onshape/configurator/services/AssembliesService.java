@@ -25,11 +25,7 @@ package com.onshape.configurator.services;
 
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
-import com.onshape.api.responses.AssembliesGetAssemblyDefinitionResponse;
-import com.onshape.api.responses.AssembliesGetAssemblyDefinitionResponseRootAssemblyInstances;
-import com.onshape.api.responses.AssembliesGetAssemblyDefinitionResponseRootAssemblyOccurrences;
-import com.onshape.api.responses.AssembliesGetAssemblyDefinitionResponseSubAssemblies;
-import com.onshape.api.responses.AssembliesGetAssemblyDefinitionResponseSubAssembliesInstances;
+import com.onshape.api.responses.*;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.ConfiguredAssembly;
 import com.onshape.configurator.model.ConfiguredPart;
@@ -41,9 +37,9 @@ import java.util.stream.Stream;
  * @author Peter Harman peter.harman@cae.tech
  */
 public class AssembliesService {
-    
+
     private final Onshape onshape;
-    
+
     public AssembliesService(Onshape onshape) {
         this.onshape = onshape;
     }
@@ -61,9 +57,18 @@ public class AssembliesService {
         AssembliesGetAssemblyDefinitionResponse assemblyDefinition = onshape.assemblies().getAssemblyDefinition()
                 .configuration(configurationString)
                 .call(document);
+        AssembliesGetBoundingBoxesResponse boundingBoxResponse = onshape.assemblies().getBoundingBoxes().call(document);
         ConfiguredAssembly configuredAssembly = new ConfiguredAssembly();
         configuredAssembly.setFromDocument(document);
         configuredAssembly.setConfiguration(configurationString);
+        ConfiguredAssembly.BoundingBox boundingBox = new ConfiguredAssembly.BoundingBox();
+        boundingBox.setLowX(boundingBoxResponse.getLowX());
+        boundingBox.setLowY(boundingBoxResponse.getLowY());
+        boundingBox.setLowZ(boundingBoxResponse.getLowZ());
+        boundingBox.setHighX(boundingBoxResponse.getHighX());
+        boundingBox.setHighY(boundingBoxResponse.getHighY());
+        boundingBox.setHighZ(boundingBoxResponse.getHighZ());
+        configuredAssembly.setBoundingBox(boundingBox);
         for (AssembliesGetAssemblyDefinitionResponseRootAssemblyInstances instance : assemblyDefinition.getRootAssembly().getInstances()) {
             if (!instance.getSuppressed()) {
                 switch (instance.getType()) {
@@ -86,15 +91,15 @@ public class AssembliesService {
         }
         return configuredAssembly;
     }
-    
+
     private AssembliesGetAssemblyDefinitionResponseRootAssemblyOccurrences getOccurrence(AssembliesGetAssemblyDefinitionResponse assemblyDefinition, String... path) {
         return Stream.of(assemblyDefinition.getRootAssembly().getOccurrences()).filter((occ) -> Arrays.equals(path, occ.getPath())).findFirst().get();
     }
-    
+
     private AssembliesGetAssemblyDefinitionResponseSubAssemblies getSubAssemblyDefinition(AssembliesGetAssemblyDefinitionResponse assemblyDefinition, OnshapeDocument target) {
         return Stream.of(assemblyDefinition.getSubAssemblies()).filter((subass) -> subass.getDocument().equals(target)).findFirst().get();
     }
-    
+
     private ConfiguredPart makePart(AssembliesGetAssemblyDefinitionResponse assemblyDefinition, String configuration, String partId, OnshapeDocument instanceDocument, String... path) {
         AssembliesGetAssemblyDefinitionResponseRootAssemblyOccurrences occurrence = getOccurrence(assemblyDefinition, path);
         if (!occurrence.getHidden()) {
@@ -108,7 +113,7 @@ public class AssembliesService {
         }
         return null;
     }
-    
+
     private ConfiguredAssembly.SubAssembly makeSubassembly(AssembliesGetAssemblyDefinitionResponse assemblyDefinition, OnshapeDocument instanceDocument, String... path) {
         AssembliesGetAssemblyDefinitionResponseRootAssemblyOccurrences occurrence = getOccurrence(assemblyDefinition, path);
         if (!occurrence.getHidden()) {

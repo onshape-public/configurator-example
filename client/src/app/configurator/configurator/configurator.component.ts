@@ -23,6 +23,7 @@ export class ConfiguratorComponent implements OnInit, OnChanges {
   configurator$: Observable<Configurator>;
   configurator: Configurator;
   configuredAssembly: ConfiguredAssembly;
+  apiConfiguration: string;
   configuration: Configuration;
   appliedConfiguration: Configuration;
   defaultConfiguration: Configuration;
@@ -55,6 +56,7 @@ export class ConfiguratorComponent implements OnInit, OnChanges {
       this.wvmType = this.wvmType as WVM;
       this.wvmId = this.route.snapshot.paramMap.get('wvmid');
       this.elementId = this.route.snapshot.paramMap.get('eid');
+      this.apiConfiguration = this.route.snapshot.queryParamMap.get('configuration');
     }
 
     console.log(this.drawingElements);
@@ -66,7 +68,7 @@ export class ConfiguratorComponent implements OnInit, OnChanges {
     this.configurator$.subscribe({
       next: (configurator) => {
         this.configurator = configurator;
-        this.defaultConfiguration = this.configuratorService.getDefaultConfiguration(configurator);
+        this.defaultConfiguration = this.configuratorService.applyStringOverrideForDefaults(this.apiConfiguration, this.configuratorService.getDefaultConfiguration(configurator));
         this.configuration = _.cloneDeep(this.defaultConfiguration);
         this.appliedConfiguration = _.cloneDeep(this.defaultConfiguration);
         this.updateAssembly();

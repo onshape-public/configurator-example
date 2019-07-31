@@ -47,7 +47,7 @@ export class ParameterQuantityComponent implements OnInit {
 
   ngOnInit() {
     this.changed = false;
-    this.value = this.parameter.defaultValue;
+    this.value = this._appliedParameterValue.value.match(/[-]?([0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\s*(\w*)/)[1] as any as number;
     this.options = {
       floor: this.parameter.minValue,
       ceil: this.parameter.maxValue,

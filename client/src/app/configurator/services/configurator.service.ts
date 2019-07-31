@@ -161,10 +161,35 @@ export class ConfiguratorService {
     return url;
   }
 
+  // CONFIGURATION UTILS METHODS
+
   getConfigurationString(configuration: Configuration) {
     let out = '';
     configuration.values.forEach((pv) => out += (out.length === 0 ? '' : ';') + pv.parameter + '=' + pv.value);
     return encodeURIComponent(out);
   }
 
+  private parseApiConfiguration(apiConfig: string) {
+    const idToValueMap = {};
+    if (apiConfig) {
+      for (const kvpair of apiConfig.split(';')) {
+        const kv = kvpair.split('=');
+        idToValueMap[kv[0]] = kv[1];
+      }
+    }
+    return idToValueMap;
+  }
+
+  getParameterIndex(parameterId: string, configuration: Configuration) {
+    return configuration.values.findIndex(value => value.parameter === parameterId);
+  }
+
+  applyStringOverrideForDefaults(apiConfig: string, configuration: Configuration) {
+    const idToValueMap = this.parseApiConfiguration(apiConfig);
+    const newConfiguration = configuration;
+    for (const [id, value] of Object.entries(idToValueMap)) {
+      newConfiguration.values[this.getParameterIndex(id, configuration)].value = value as string;
+    }
+    return newConfiguration;
+  }
 }
