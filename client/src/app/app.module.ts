@@ -9,9 +9,10 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 
 //
 import { AppComponent } from './app.component';
-import { ThreeModule } from './three/three.module';
-import { ThreeToolsModule } from './three-tools/three-tools.module';
 import { ConfiguratorModule } from './configurator/configurator.module';
+import { ThreeToolsModule } from './three-tools/three-tools.module';
+import { ThreeModule } from './three/three.module';
+import { AppRoutingModule } from './app-routing/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -20,11 +21,12 @@ import { ConfiguratorModule } from './configurator/configurator.module';
   imports: [
     BrowserModule,
     FormsModule,
-    ThreeModule,
-    ThreeToolsModule,
     ConfiguratorModule,
     NgbModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ThreeToolsModule,
+    ThreeModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

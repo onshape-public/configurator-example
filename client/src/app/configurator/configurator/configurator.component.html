@@ -51,13 +51,17 @@
   <three-webgl-renderer>
 
     <!--        <three-perspective-camera [fov]=60 [near]=1 [far]=1100 positionX=20 positionY=50 positionZ=50></three-perspective-camera>-->
-    <three-orthographic-camera [fov]=6 positionX=2.5 positionY=2.5 positionZ=2.5></three-orthographic-camera>
+    <three-orthographic-camera [fov]=6 positionX={{configuredAssembly.boundingBox.highX}} positionY={{configuredAssembly.boundingBox.highX}} positionZ={{configuredAssembly.boundingBox.highX}}>
+      <three-directional-light color="white" intensity="1" distance="10" translateX=0 translateY=0 translateZ=50></three-directional-light>
+    </three-orthographic-camera>
 
     <three-scene [rotateX]="halfpi">
       <three-axes-helper size=2></three-axes-helper>
 
-      <three-point-light color="white" intensity="0.9" distance="1000" translateX=50 translateY=50 translateZ=50></three-point-light>
-      <three-point-light color="#FAFAFA" intensity="0.5" distance="1000" translateX=-50 translateY=50 translateZ=20></three-point-light>
+      <three-directional-light color="white" intensity="0.3" distance="10" translateX=1 translateY=-1 translateZ=1></three-directional-light>
+      <three-directional-light color="white" intensity="0.3" distance="10" translateX=1 translateY=1 translateZ=1></three-directional-light>
+      <three-directional-light color="white" intensity="0.3" distance="10" translateX=-1 translateY=1 translateZ=1></three-directional-light>
+<!--      <three-ambient-light color="white" intensity="0.2" distance="1000" translateX=50 translateY=50 translateZ=50></three-ambient-light>-->
 
       <app-configured-assembly [configuredAssembly]="configuredAssembly"></app-configured-assembly>
     </three-scene>

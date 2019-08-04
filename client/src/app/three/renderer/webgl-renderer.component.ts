@@ -57,11 +57,11 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
   private hovered: Array<THREE.Intersection>;
   private clock: THREE.Clock;
 
-  @ViewChild('canvas')
+  @ViewChild('canvas', {static: true})
   private canvasRef: ElementRef;
 
-  @ContentChild(SceneDirective) sceneComponent: SceneDirective;
-  @ContentChild(AbstractCamera) cameraComponent: AbstractCamera<THREE.Camera>;
+  @ContentChild(SceneDirective, {static: true}) sceneComponent: SceneDirective;
+  @ContentChild(AbstractCamera, {static: true}) cameraComponent: AbstractCamera<THREE.Camera>;
 
   constructor(private zone: NgZone, private changeDetector: ChangeDetectorRef) {
     console.log('RendererComponent.constructor');

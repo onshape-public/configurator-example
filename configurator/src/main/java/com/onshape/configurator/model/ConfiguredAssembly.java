@@ -40,6 +40,8 @@ public class ConfiguredAssembly extends AbstractDocumentElement {
     private final Collection<SubAssembly> subAssemblies = new ArrayList<>();
     @JsonProperty
     private final Collection<ConfiguredPart> parts = new ArrayList<>();
+    @JsonProperty
+    private BoundingBox boundingBox;
 
     public String getConfiguration() {
         return configuration;
@@ -55,6 +57,77 @@ public class ConfiguredAssembly extends AbstractDocumentElement {
 
     public Collection<ConfiguredPart> getParts() {
         return parts;
+    }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    public void setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
+    public static class BoundingBox {
+        @JsonProperty
+        private Number lowX;
+        @JsonProperty
+        private Number lowY;
+        @JsonProperty
+        private Number lowZ;
+        @JsonProperty
+        private Number highX;
+        @JsonProperty
+        private Number highY;
+        @JsonProperty
+        private Number highZ;
+
+        public Number getLowX() {
+            return lowX;
+        }
+
+        public void setLowX(Number lowX) {
+            this.lowX = lowX;
+        }
+
+        public Number getLowY() {
+            return lowY;
+        }
+
+        public void setLowY(Number lowY) {
+            this.lowY = lowY;
+        }
+
+        public Number getLowZ() {
+            return lowZ;
+        }
+
+        public void setLowZ(Number lowZ) {
+            this.lowZ = lowZ;
+        }
+
+        public Number getHighX() {
+            return highX;
+        }
+
+        public void setHighX(Number highX) {
+            this.highX = highX;
+        }
+
+        public Number getHighY() {
+            return highY;
+        }
+
+        public void setHighY(Number highY) {
+            this.highY = highY;
+        }
+
+        public Number getHighZ() {
+            return highZ;
+        }
+
+        public void setHighZ(Number highZ) {
+            this.highZ = highZ;
+        }
     }
 
     public static class SubAssembly {

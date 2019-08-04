@@ -12,9 +12,9 @@ As well as configurators, this could be used as the basis of a range of applicat
 # Before anything
 
 Prerequisites:
-* npm
-* jdk
-* mvn
+* node + npm (v10)
+* jdk (1.8)
+* mvn (3)
 * docker
 
 ```
@@ -37,7 +37,7 @@ Run the server:
 
 ```
 cd configurator
-mvn jetty:stop jetty:start
+mvn jetty:stop jetty:run
 cd ..
 ```
 
@@ -45,22 +45,17 @@ Run the client, the following will build and run the client and launch the brows
 
 ```
 cd client
-npm run serve
+npm run start
 cd ..
 ```
 
+# Docker
 
-# How to build
-
-The following will build a Docker image called "configurator":
-
-
+First build a Docker image called "configurator":
 ```
 cd configurator
 mvn package -DskipTests=true
 ```
-
-# How to run: container
 
 The following will run the configurator at http://localhost:8080:
 
