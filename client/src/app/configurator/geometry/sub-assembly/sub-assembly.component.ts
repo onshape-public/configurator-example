@@ -10,6 +10,7 @@ import * as THREE from 'three';
   providers: [{ provide: AbstractObject3D, useExisting: forwardRef(() => SubAssemblyComponent) }]
 })
 export class SubAssemblyComponent extends AbstractObject3D<THREE.Group> implements OnInit, OnChanges {
+  @Input() rootDocumentId: string;
   @Input() subassembly: SubAssembly;
 
   constructor() {

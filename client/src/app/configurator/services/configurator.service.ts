@@ -89,14 +89,14 @@ export class ConfiguratorService {
     return configuration;
   }
 
-  getPart(part: ConfiguredPart, progressCallback: any): Observable<THREE.Object3D> {
+  getPart(rootDocumentId: string, part: ConfiguredPart, progressCallback: any): Observable<THREE.Object3D> {
     this.request();
     // Construct the URLs to the geometry and appearance
     const urlPath = this.getURLPathFor(part)  + '/c/'
       + encodeURIComponent(part.configuration)
       + '/p/' + encodeURIComponent(part.partId);
-    const geometryURL = '/api/parts' + urlPath + '.stl';
-    const appearanceURL = '/api/parts' + urlPath + '/appearance';
+    const geometryURL = '/api/parts' + urlPath + '.stl?linkDocumentId=' + rootDocumentId;
+    const appearanceURL = '/api/parts' + urlPath + '/appearance?linkDocumentId=' + rootDocumentId;
     // Construct a unique key for caching
     const key = 'parts' + urlPath;
 
@@ -166,6 +166,9 @@ export class ConfiguratorService {
   getConfigurationString(configuration: Configuration) {
     let out = '';
     configuration.values.forEach((pv) => out += (out.length === 0 ? '' : ';') + pv.parameter + '=' + pv.value);
+    if (out.length === 0) {
+      out = 'default';
+    }
     return encodeURIComponent(out);
   }
 

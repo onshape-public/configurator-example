@@ -42,7 +42,7 @@ public class PartsService {
         this.onshape = onshape;
     }
 
-    public Appearance getAppearance(OnshapeDocument document, String partId, String configurationString) throws OnshapeException {
+    public Appearance getAppearance(OnshapeDocument document, String partId, String configurationString, String linkDocumentId) throws OnshapeException {
         // Note: The following does not use the client request object as the configuration parameter is missing
         MetadataGetPartMetadataResponse partMeta = onshape.call("get",
                 "/metadata/d/:did/[wvm]/:wvm/e/:eid/p/:pid",
@@ -52,7 +52,8 @@ public class PartsService {
                         "wvmType", document.getWVM(), 
                         "wvm", document.getWVMId(), 
                         "eid", document.getElementId()),
-                onshape.buildMap("configuration", configurationString),
+                onshape.buildMap("configuration", configurationString, 
+                        "linkDocumentId", linkDocumentId),
                 MetadataGetPartMetadataResponse.class);
         Appearance appearance = new Appearance();
         appearance.setOpacity(1);

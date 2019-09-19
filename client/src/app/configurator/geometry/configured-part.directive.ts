@@ -11,6 +11,7 @@ import {BufferGeometry} from 'three';
   providers: [{ provide: AbstractObject3D, useExisting: forwardRef(() => ConfiguredPartDirective) }]
 })
 export class ConfiguredPartDirective extends AbstractObject3D<THREE.Object3D> implements OnChanges {
+  @Input() rootDocumentId: string;
   @Input() part: ConfiguredPart;
   protected currentLoadedModelObject: THREE.Object3D | undefined;
 
@@ -79,7 +80,7 @@ export class ConfiguredPartDirective extends AbstractObject3D<THREE.Object3D> im
   }
 
   protected load(): Observable<THREE.Object3D> {
-    return this.configuratorService.getPart(this.part,
+    return this.configuratorService.getPart(this.rootDocumentId, this.part,
       (progress) => {
       this.onProgress('Loading...', progress.loaded / progress.total);
     });

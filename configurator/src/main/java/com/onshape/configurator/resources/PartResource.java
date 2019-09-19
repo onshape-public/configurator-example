@@ -102,7 +102,7 @@ public class PartResource {
                     wvm == WVM.Version ? wvmId : null,
                     wvm == WVM.Microversion ? wvmId : null,
                     elementId);
-            Appearance appearance = partsService.getAppearance(document, partId, configuration);
+            Appearance appearance = partsService.getAppearance(document, partId, configuration, linkDocumentId);
             CacheControl cc = new CacheControl();
             cc.setMaxAge(3600);
             return Response.ok(appearance).cacheControl(cc).build();
