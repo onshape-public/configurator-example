@@ -48,24 +48,24 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>docker</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <arguments>
-                                <argument>build</argument>
-                                <argument>--build-arg</argument>
-                                <argument>WARFILE=${project.build.finalName}.war</argument>
-                                <argument>.</argument>
-                                <argument>-t</argument>
-                                <argument>configurator</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>docker</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>docker</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>build</argument>-->
+<!--                                <argument>&#45;&#45;build-arg</argument>-->
+<!--                                <argument>WARFILE=${project.build.finalName}.war</argument>-->
+<!--                                <argument>.</argument>-->
+<!--                                <argument>-t</argument>-->
+<!--                                <argument>configurator</argument>-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
