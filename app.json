@@ -9,10 +9,10 @@
   "logo": "https://cad.onshape.com/images/onshape_logo_medium.png",
   "buildpacks": [
     {
-      "url": "https://github.com/heroku/heroku-buildpack-java"
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
     },
     {
-      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+      "url": "https://github.com/heroku/heroku-buildpack-java"
     }
   ]
 }
