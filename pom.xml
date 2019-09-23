@@ -44,7 +44,7 @@
                                 <argument>run</argument>
                                 <argument>publish</argument>
                                 <argument>--prefix</argument>
-                                <argument>../client</argument>
+                                <argument>client</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -60,7 +60,7 @@
                                 <argument>build</argument>
                                 <argument>--build-arg</argument>
                                 <argument>WARFILE=${project.build.finalName}.war</argument>
-                                <argument>..</argument>
+                                <argument>.</argument>
                                 <argument>-t</argument>
                                 <argument>configurator</argument>
                             </arguments>
@@ -135,7 +135,7 @@
                         <class>com.onshape.configurator.model.ExportFormat</class>
                         <class>com.onshape.configurator.model.ParameterValue</class>
                     </classes>
-                    <outputFile>../client/src/typescript-generator/configurator.ts</outputFile>
+                    <outputFile>client/src/typescript-generator/configurator.ts</outputFile>
                     <outputFileType>implementationFile</outputFileType>
                     <outputKind>module</outputKind>
                     <mapClasses>asClasses</mapClasses>
