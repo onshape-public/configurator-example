@@ -60,11 +60,7 @@
                                 <argument>build</argument>
                                 <argument>--build-arg</argument>
                                 <argument>WARFILE=${project.build.finalName}.war</argument>
-                                <argument>--build-arg</argument>
-                                <argument>APIKEY=${env.ONSHAPE_API_ACCESSKEY}</argument>
-                                <argument>--build-arg</argument>
-                                <argument>APISECRET=${env.ONSHAPE_API_SECRETKEY}</argument>
-                                <argument>.</argument>
+                                <argument>..</argument>
                                 <argument>-t</argument>
                                 <argument>configurator</argument>
                             </arguments>
@@ -147,6 +143,26 @@
                         <extension>cz.habarta.typescript.generator.ext.JsonDeserializationExtension</extension>
                     </extensions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jsimone</groupId>
+                                    <artifactId>webapp-runner</artifactId>
+                                    <version>9.0.24.0</version>
+                                    <destFileName>webapp-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
