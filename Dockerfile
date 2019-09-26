@@ -2,7 +2,4 @@ FROM jetty:jre8
 MAINTAINER Peter Harman <peter.harman@cae.tech>
 
 ARG WARFILE
-ARG APIKEY
-ARG APISECRET
 ADD target/${WARFILE} /var/lib/jetty/webapps/ROOT.war
-ENV ONSHAPE_API_ACCESSKEY=${APIKEY} ONSHAPE_API_SECRETKEY=${APISECRET}

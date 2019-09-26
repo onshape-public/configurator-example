@@ -33,7 +33,7 @@
           },
           "configurations": {
             "production": {
-              "outputPath": "../configurator/target/configurator",
+              "outputPath": "../target/configurator",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
