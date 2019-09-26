@@ -44,32 +44,28 @@
                                 <argument>run</argument>
                                 <argument>publish</argument>
                                 <argument>--prefix</argument>
-                                <argument>../client</argument>
+                                <argument>client</argument>
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>docker</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <arguments>
-                                <argument>build</argument>
-                                <argument>--build-arg</argument>
-                                <argument>WARFILE=${project.build.finalName}.war</argument>
-                                <argument>--build-arg</argument>
-                                <argument>APIKEY=${env.ONSHAPE_API_ACCESSKEY}</argument>
-                                <argument>--build-arg</argument>
-                                <argument>APISECRET=${env.ONSHAPE_API_SECRETKEY}</argument>
-                                <argument>.</argument>
-                                <argument>-t</argument>
-                                <argument>configurator</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>docker</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>exec</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <executable>docker</executable>-->
+<!--                            <arguments>-->
+<!--                                <argument>build</argument>-->
+<!--                                <argument>&#45;&#45;build-arg</argument>-->
+<!--                                <argument>WARFILE=${project.build.finalName}.war</argument>-->
+<!--                                <argument>.</argument>-->
+<!--                                <argument>-t</argument>-->
+<!--                                <argument>configurator</argument>-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -139,7 +135,7 @@
                         <class>com.onshape.configurator.model.ExportFormat</class>
                         <class>com.onshape.configurator.model.ParameterValue</class>
                     </classes>
-                    <outputFile>../client/src/typescript-generator/configurator.ts</outputFile>
+                    <outputFile>client/src/typescript-generator/configurator.ts</outputFile>
                     <outputFileType>implementationFile</outputFileType>
                     <outputKind>module</outputKind>
                     <mapClasses>asClasses</mapClasses>
@@ -148,6 +144,26 @@
                     </extensions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jsimone</groupId>
+                                    <artifactId>webapp-runner</artifactId>
+                                    <version>9.0.24.0</version>
+                                    <destFileName>webapp-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -155,7 +171,7 @@
         <dependency>
 	        <groupId>com.github.onshape-public</groupId>
 	        <artifactId>java-client</artifactId>
-	        <version>v1.99.23852.e4ce1bb7a429</version>
+	        <version>v1.102.24188.7cfc643a31d9</version>
 	    </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

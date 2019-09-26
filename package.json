@@ -1,0 +1,10 @@
+{
+  "name": "foobar-app",
+  "version": "0.1.0",
+  "scripts": {
+    "postinstall": "npm install client"
+  },
+  "dependencies": {
+    "onshape-configurator": "file:client"
+  }
+}
