@@ -48,24 +48,6 @@
                             </arguments>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>docker</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>exec</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <executable>docker</executable>-->
-<!--                            <arguments>-->
-<!--                                <argument>build</argument>-->
-<!--                                <argument>&#45;&#45;build-arg</argument>-->
-<!--                                <argument>WARFILE=${project.build.finalName}.war</argument>-->
-<!--                                <argument>.</argument>-->
-<!--                                <argument>-t</argument>-->
-<!--                                <argument>configurator</argument>-->
-<!--                            </arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -150,7 +132,9 @@
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>copy</goal></goals>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
@@ -169,10 +153,10 @@
 
     <dependencies>
         <dependency>
-	        <groupId>com.github.onshape-public</groupId>
-	        <artifactId>java-client</artifactId>
-	        <version>v1.102.24188.7cfc643a31d9</version>
-	    </dependency>
+            <groupId>com.github.onshape-public</groupId>
+            <artifactId>java-client</artifactId>
+            <version>v1.102.24188.7cfc643a31d9</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -299,4 +283,71 @@
             <version>2.7.0</version>
         </dependency>
     </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>docker</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>docker</executable>
+                                    <arguments>
+                                        <argument>build</argument>
+                                        <argument>&#45;&#45;build-arg</argument>
+                                        <argument>WARFILE=${project.build.finalName}.war</argument>
+                                        <argument>.</argument>
+                                        <argument>-t</argument>
+                                        <argument>configurator</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>gae</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>appengine-maven-plugin</artifactId>
+                        <version>2.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                                <configuration>
+                                    <projectId>${gae.project}</projectId>
+                                    <dockerfile>${basedir}/src/main/docker/Dockerfile</dockerfile>
+                                    <dockerDirectory>${basedir}/src/main/docker</dockerDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
