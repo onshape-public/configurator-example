@@ -1,0 +1,13 @@
+language: java
+before_script: mvn package
+env:
+  global:
+    secure: Kn/LPAkEB4LeAukWmnJQ66nJHdw8t0Nqk5VvntdsrvtRQldBrlwyw22MENk+Rhs+Qj0BwtAasEYvBZUO96kJt2RFe2E8z1dRKZ2mMDuAJlG0tBRxJVDGaojcjRZpPmK3tZJjwBkzTMZEl+QFW68pM2I/+Sb5VdB3Pp/Iot/+lIhNd/Kr9YIrh4fpznA6yQ4Gu8d1PP/rcAhW3AWR34MQYP872Gf0IhBpqgph40vsZoQxRKqi6RAhwfXXhZdwqraix6IMlzE3SbQ87EaSVLW4vHmYg3mkhDVVisPW30aBQMVQyudifVRnXqRU0cxQ8sKIIsLn0Wet58Vy1qBXe9gRZoY0enaPXGI9GObXtDxXBmdBfj6vCMTTGhCAbpM9LLC9Czky6qtyaATJx8m28saVKaOadqH2F146xxw43McSD+/HfysaZQTegjNiFt5lfmGpo4/VE8sS+Q+5eiJiz1G27u3GvyOYgWxSbCpkH8K3sDk5KGoWrsfH6FkAxZS3m76ZIqX3BY7WNH5C5p35S6rJieCro6W+MlhfkuU3MiJE3GExValK/fEP/0s0AoyvYQlHOqcp3/yn0LdoxOqpaxVwXV8969CAQjrWnAoVJuHISjsS5INhioKSoYKd/QQMMD6LFE/tM6h24OlGrC2CRsxnqM/5sRrtogjAaLITzPplITY=
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: ${TRAVIS_BUILD_DIR}/target/configurator.war
+  skip_cleanup: true
+  on:
+    tags: true
