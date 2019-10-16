@@ -9,7 +9,8 @@ env:
   - secure: pwYBg13ASuphHMmd/ZghkcDU2jed5R5U84Ie8iPVouVzf00Xsjj/8ZoxC7MtuLxonQ623dyKsjDtnooiUdEzt5zuuVEwaIafsX5zqlgjI6+nCQ0YkFELhugTVXlFHRPyKeblVOH1WCviNnsXayXXdMjwaMffHGzwdUKiBwjMiOAP7aUD6ly1aKCq3AE07+sc8pyJVnZlu5cYQHmYjVwqvNnnjnXjMPgnx7zp+PsCdxY/m7riX/agrmupNfeM+NUgdZDyBgl1bCNc9yf4HQZfy/MAP6k9R8TYRmR1qgIMIdDKsdPzvn/NEbncixlHBf5Rdq/lWjybZXvt0W3lRmsNs2kROnzkQCb7PUPybp6Lgj2oIdqOMDlYvkgWVTbxHQ5mv5hiNaZ17Kf9pRX5XMqluUqfdNfwa7aQU5oOXLeyxmWu0xXcH5sxdAxmw3+iM0t++yng2/ALuU7Ttb3MaiIYGEyCtmqCzvc6FZZJDWGo6G6bu6t+7ndYCTfudJ+HXh4NKbFPNyC6FqU8MUel6xa1iQGReEdQ0JSrOqvC1D9TnvN4qQdpGxpHdLSSW4NJtIF+91+DUpAeKCF7uH62n3rrVbyRq2nA6ZFgmjJVverVMm5euG+o+6Q4IpBMoiL22ftcy0q+hcRshcAZORhfcQmxPgirC8K/+QB+JA29zCvDSpU=
 install:
   - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-  - sudo apt-get install -y nodejs
+  - sudo apt install nodejs
+  - node --version
   - npm install
 before_script: mvn package
 script:
