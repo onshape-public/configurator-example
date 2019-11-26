@@ -23,15 +23,17 @@
  */
 package com.onshape.configurator.resources;
 
-import com.onshape.api.Onshape;
+import com.google.common.io.ByteStreams;
 import com.onshape.api.exceptions.OnshapeException;
-import com.onshape.api.types.Blob;
+import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.api.types.WVM;
 import com.onshape.configurator.filters.Compress;
 import com.onshape.configurator.model.Appearance;
+import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.PartsService;
 import com.onshape.configurator.storage.CacheResult;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -39,10 +41,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -50,14 +54,15 @@ import javax.ws.rs.core.Response;
  */
 @Path("/parts")
 public class PartResource {
-    // /configurator_id/parts/part_id.stl?configuration=...
 
     @GET
     @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/p/{part_id}.stl")
     @Compress
-    @CacheResult
     @Produces({"application/sla"})
-    public Response getGeometry(@Context Onshape onshape,
+    public Response getGeometry(
+            @Context PartsService partsService,
+            @Context CacheControlService cacheControlService,
+            @Context Request request,
             @PathParam("document_id") String documentId,
             @PathParam("wvm") WVM wvm,
             @PathParam("wvm_id") String wvmId,
@@ -65,30 +70,43 @@ public class PartResource {
             @PathParam("configuration") String configuration,
             @PathParam("part_id") String partId,
             @QueryParam("source") String linkDocumentId) {
-        Blob file;
         try {
-            // Use the Onshape client to fetch the geometry
-            // TODO: Could store a future so that multple threads don't ask for the same resource
-            file = onshape.parts().exportStl()
-                    .configuration(configuration)
-                    .mode("text")
-                    .units("meter")
-                    .linkDocumentId(linkDocumentId)
-                    .call(documentId, wvm, wvmId, elementId, partId).getFile();
+            // Create an instance of Onshape document for the requested document
+            OnshapeDocument document = new OnshapeDocument(documentId,
+                    wvm == WVM.Workspace ? wvmId : null,
+                    wvm == WVM.Version ? wvmId : null,
+                    wvm == WVM.Microversion ? wvmId : null,
+                    elementId);
+
+            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
+            EntityTag etag = cacheControlService.getEntityTag(document);
+            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, document, etag);
+            if (responseBuilder != null) {
+                return responseBuilder.build();
+            }
+
+            // Fetch the geometry from Onshape, and pass stream directly to response
+            InputStreamWithHeaders geometry = partsService.getGeometry(document, partId, configuration, linkDocumentId);
+            return cacheControlService.applyCacheControl(Response.ok((StreamingOutput) (OutputStream output) -> {
+                ByteStreams.copy(geometry.getInputStream(), output);
+                output.flush();
+            }, "application/sla"), document, etag)
+                    .header("Content-Encoding", geometry.getContentEncoding() == null ? "" : geometry.getContentEncoding())
+                    .build();
         } catch (OnshapeException ex) {
             Logger.getLogger(PartResource.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(500, ex.getMessage()).build();
         }
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(3600);
-        return Response.ok(file.toInputStream(), "application/sla").cacheControl(cc).build();
     }
 
     @GET
     @CacheResult
     @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/p/{part_id}/appearance")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getAppearance(@Context PartsService partsService,
+    public Response getAppearance(
+            @Context PartsService partsService,
+            @Context CacheControlService cacheControlService,
+            @Context Request request,
             @PathParam("document_id") String documentId,
             @PathParam("wvm") WVM wvm,
             @PathParam("wvm_id") String wvmId,
@@ -97,15 +115,23 @@ public class PartResource {
             @PathParam("part_id") String partId,
             @QueryParam("source") String linkDocumentId) {
         try {
+            // Create an instance of Onshape document for the requested document
             OnshapeDocument document = new OnshapeDocument(documentId,
                     wvm == WVM.Workspace ? wvmId : null,
                     wvm == WVM.Version ? wvmId : null,
                     wvm == WVM.Microversion ? wvmId : null,
                     elementId);
+            
+            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
+            EntityTag etag = cacheControlService.getEntityTag(document);
+            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, document, etag);
+            if (responseBuilder != null) {
+                return responseBuilder.build();
+            }
+            
+            // Fetch the appearance from Onshape, and return
             Appearance appearance = partsService.getAppearance(document, partId, configuration, linkDocumentId);
-            CacheControl cc = new CacheControl();
-            cc.setMaxAge(3600);
-            return Response.ok(appearance).cacheControl(cc).build();
+            return cacheControlService.applyCacheControl(Response.ok(appearance), document, etag).build();
         } catch (OnshapeException ex) {
             Logger.getLogger(PartResource.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(500, ex.getMessage()).build();

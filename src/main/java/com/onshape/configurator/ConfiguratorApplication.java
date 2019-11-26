@@ -38,6 +38,7 @@ import com.onshape.configurator.resources.DrawingsResource;
 import com.onshape.configurator.resources.ExportsResource;
 import com.onshape.configurator.resources.PartResource;
 import com.onshape.configurator.services.AssembliesService;
+import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.ConfigurationsService;
 import com.onshape.configurator.services.DrawingsService;
 import com.onshape.configurator.services.ExportsService;
@@ -134,6 +135,7 @@ public class ConfiguratorApplication extends ResourceConfig {
             bindService(new ThumbnailsService(onshape), ThumbnailsService.class, RequestScoped.class);
             bindService(new PartsService(onshape), PartsService.class, RequestScoped.class);
             bindService(new ExportsService(onshape), ExportsService.class, RequestScoped.class);
+            bindService(new CacheControlService(onshape), CacheControlService.class, RequestScoped.class);
             bindService(new CacheService(), CacheService.class, Singleton.class);
         }
 

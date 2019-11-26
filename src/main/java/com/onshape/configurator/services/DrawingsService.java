@@ -28,10 +28,10 @@ import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.responses.AppElementsResolveReferencesResponse;
 import com.onshape.api.responses.AppElementsResolveReferencesResponseResolvedReferences;
 import com.onshape.api.responses.AppElementsUpdateReferenceResponse;
-import com.onshape.api.responses.DocumentsDownloadExternalDataResponse;
 import com.onshape.api.responses.DocumentsGetElementListResponseElements;
 import com.onshape.api.responses.DrawingsCreateTranslationResponse;
 import com.onshape.api.types.Blob;
+import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.ConfigurableDrawing;
 import java.util.ArrayList;
@@ -71,13 +71,12 @@ public class DrawingsService {
         return cd;
     }
 
-    public Blob getConfiguredDrawing(OnshapeDocument assembly, OnshapeDocument drawingElement, String configuration) throws OnshapeException {
+    public InputStreamWithHeaders getConfiguredDrawing(OnshapeDocument assembly, OnshapeDocument drawingElement, String configuration) throws OnshapeException {
         // Replace versioned references with editable Workspace
         final OnshapeDocument drawing = documentLockService.getWritable(drawingElement);
         try {
             // Resolve the references to identify those that relate to the assembly
             AppElementsResolveReferencesResponse resolvedReferences = onshape.appElements().resolveReferences()
-                    //                    .referenceIds(Joiner.on(',').join(references))
                     .call(drawing);
 
             // Infer the current configuration from any references to the assembly element
@@ -99,19 +98,15 @@ public class DrawingsService {
                     // We are only interested if it matches the current configuration
                     if (resolvedReference.getIsConfigurable()
                             && currentConfigurations.contains(resolvedReference.getTargetConfiguration())) {
-                        updateResponses.add(executor.submit(new Callable<AppElementsUpdateReferenceResponse>() {
-                            @Override
-                            public AppElementsUpdateReferenceResponse call() throws Exception {
-                                // Update the configuration of the reference
-                                return onshape.appElements().updateReference()
-                                        .targetElementId(resolvedReference.getTargetElementId())
-                                        .targetConfiguration(configuration)
-                                        .targetMicroversionId(resolvedReference.getResolvedDocumentMicroversionId())
-                                        .call(drawing, resolvedReference.getReferenceId());
-                            }
-                        }));
+                        updateResponses.add(executor.submit(() -> onshape.appElements().updateReference()
+                                .targetElementId(resolvedReference.getTargetElementId())
+                                .targetConfiguration(configuration)
+                                .targetMicroversionId(resolvedReference.getResolvedDocumentMicroversionId())
+                                .call(drawing, resolvedReference.getReferenceId()) // Update the configuration of the reference
+                        ));
                     }
                 }
+                // Wait for completion of the updates
                 for (Future<AppElementsUpdateReferenceResponse> response : updateResponses) {
                     response.get();
                 }
@@ -143,9 +138,9 @@ public class DrawingsService {
             }
 
             // Download the translation result
-            DocumentsDownloadExternalDataResponse download = onshape.documents().downloadExternalData()
-                    .call(completedTranslation.getResultExternalDataIds()[0], completedTranslation.getResultDocumentId());
-            return download.getData();
+            InputStreamWithHeaders download = onshape.documents().downloadExternalData()
+                    .callToStream(completedTranslation.getResultExternalDataIds()[0], completedTranslation.getResultDocumentId());
+            return download;
         } catch (ExecutionException | InterruptedException ex) {
             throw new OnshapeException("Error while waiting for translation completion", ex);
         } finally {

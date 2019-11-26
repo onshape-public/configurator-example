@@ -72,27 +72,6 @@ public class ConfigurationsService {
         return configurator;
     }
 
-//    public void updateDefaultValues(OnshapeDocument documentElement, String configurationString) throws OnshapeException {
-//
-//        // Fetch the current element configuration from Onshape
-//        ElementsGetConfigurationResponse elementConfiguration = onshape.elements()
-//                .getConfiguration().call(documentElement);
-//
-//        Map[] configurationParameters = elementConfiguration.getConfigurationParameters();
-//        for (int i = 0; i < configurationParameters.length; i++) {
-//            Map message = (Map) configurationParameters[i].get("message");
-//            switch (configurationParameters[i].get("typeName").toString()) {
-//                case "BTMConfigurationParameterQuantity":
-//                    Map rangeAndDefault = (Map) message.get("rangeAndDefault");
-//                    Map rangeAndDefaultMessage = (Map) rangeAndDefault.get("message");
-//                    rangeAndDefaultMessage.put("defaultValue", value);
-//                case "BTMConfigurationParameterEnum":
-//                default:
-//            }
-//        }
-//
-//    }
-
     private ConfigurationParameter getParameter(Map elementParameter) {
         Map message = (Map) elementParameter.get("message");
         switch (elementParameter.get("typeName").toString()) {

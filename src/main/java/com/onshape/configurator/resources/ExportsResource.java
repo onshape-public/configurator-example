@@ -23,19 +23,27 @@
  */
 package com.onshape.configurator.resources;
 
+import com.google.common.io.ByteStreams;
 import com.onshape.api.exceptions.OnshapeException;
+import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.api.types.WVM;
 import com.onshape.configurator.filters.Compress;
+import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.ExportsService;
 import com.onshape.configurator.storage.CacheResult;
+import java.io.OutputStream;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -50,28 +58,45 @@ public class ExportsResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/formats")
     public Response getFormats(@Context ExportsService exportsService) throws OnshapeException {
-        return Response.ok(exportsService.getFormats()).build();
+        CacheControl cc = new CacheControl();
+        cc.setMaxAge(CacheControlService.ONE_WEEK);
+        return Response.ok(exportsService.getFormats()).cacheControl(cc).build();
     }
 
     @GET
-    @Compress
     @Produces({MediaType.APPLICATION_OCTET_STREAM})
     @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/f/{format}")
     public Response export(@Context ExportsService exportsService,
+            @Context CacheControlService cacheControlService,
+            @Context Request request,
             @PathParam("document_id") String documentId,
             @PathParam("wvm") WVM wvm,
             @PathParam("wvm_id") String wvmId,
             @PathParam("element_id") String elementId,
             @PathParam("configuration") String configuration,
             @PathParam("format") String format) throws OnshapeException {
+        // Create an instance of Onshape document for the requested document
         OnshapeDocument assembly = new OnshapeDocument(documentId,
                 wvm == WVM.Workspace ? wvmId : null,
                 wvm == WVM.Version ? wvmId : null,
                 wvm == WVM.Microversion ? wvmId : null,
                 elementId);
-        return Response.ok(exportsService.export(assembly, configuration, format),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE)
+
+        // Get an ETag and compare to the ETag in the request, respond with 304 if matching
+        EntityTag etag = cacheControlService.getEntityTag(assembly);
+        Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, assembly, etag);
+        if (responseBuilder != null) {
+            return responseBuilder.build();
+        }
+
+        // Fetch the file from Onshape, pass stream directly to response
+        InputStreamWithHeaders export = exportsService.export(assembly, configuration, format);
+        return cacheControlService.applyCacheControl(Response.ok((StreamingOutput) (OutputStream output) -> {
+            ByteStreams.copy(export.getInputStream(), output);
+            output.flush();
+        }, export.getContentType() == null ? MediaType.APPLICATION_OCTET_STREAM : export.getContentType())
                 .header("Content-Disposition", "attachment; filename=export." + format.toLowerCase() + "")
+                .header("Content-Encoding", export.getContentEncoding() == null ? "" : export.getContentEncoding()), assembly, etag)
                 .build();
     }
 }

@@ -29,6 +29,7 @@ import com.onshape.api.types.WVM;
 import com.onshape.configurator.filters.Compress;
 import com.onshape.configurator.model.ConfiguredAssembly;
 import com.onshape.configurator.services.AssembliesService;
+import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.storage.CacheResult;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +38,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
@@ -52,24 +55,36 @@ public class AssemblyResource {
     @Compress
     @CacheResult
     @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}")
-    public Response getAssembly(@Context AssembliesService assembliesService,
+    public Response getAssembly(
+            @Context AssembliesService assembliesService,
+            @Context CacheControlService cacheControlService,
+            @Context Request request,
             @PathParam("document_id") String documentId,
             @PathParam("wvm") WVM wvm,
             @PathParam("wvm_id") String wvmId,
             @PathParam("element_id") String elementId,
             @PathParam("configuration") String configuration) {
         try {
+            // Create an instance of Onshape document for the requested document
             OnshapeDocument document = new OnshapeDocument(documentId,
                     wvm == WVM.Workspace ? wvmId : null,
                     wvm == WVM.Version ? wvmId : null,
                     wvm == WVM.Microversion ? wvmId : null,
                     elementId);
+
+            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
+            EntityTag etag = cacheControlService.getEntityTag(document);
+            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, document, etag);
+            if (responseBuilder != null) {
+                return responseBuilder.build();
+            }
+            
+            // Fetch the assembly from Onshape, and return
             ConfiguredAssembly assembly = assembliesService.getAssembly(document, configuration);
-            return Response.ok(assembly).build();
+            return cacheControlService.applyCacheControl(Response.ok(assembly), document, etag).build();
         } catch (OnshapeException ex) {
             Logger.getLogger(ConfiguratorResource.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(500, ex.getMessage()).build();
         }
     }
-
 }

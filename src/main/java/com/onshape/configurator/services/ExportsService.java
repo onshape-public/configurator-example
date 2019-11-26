@@ -26,11 +26,10 @@ package com.onshape.configurator.services;
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.responses.AssembliesCreateTranslationResponse;
-import com.onshape.api.responses.DocumentsDownloadExternalDataResponse;
 import com.onshape.api.responses.TranslationsGetTranslatorFormatsResponseItems;
+import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.ExportFormat;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +59,7 @@ public class ExportsService {
         return out;
     }
 
-    public InputStream export(OnshapeDocument document, String configuration, String format) throws OnshapeException {
+    public InputStreamWithHeaders export(OnshapeDocument document, String configuration, String format) throws OnshapeException {
         try {
             // Start the translation process
             CompletableFuture<AssembliesCreateTranslationResponse> exportFuture
@@ -77,10 +76,10 @@ public class ExportsService {
             }
 
             // Download the translated file
-            DocumentsDownloadExternalDataResponse download
+            InputStreamWithHeaders download
                     = onshape.documents().downloadExternalData()
-                            .call(export.getResultExternalDataIds()[0], export.getDocumentId());
-            return download.getData().toInputStream();
+                            .callToStream(export.getResultExternalDataIds()[0], export.getDocumentId());
+            return download;
         } catch (ExecutionException | InterruptedException ex) {
             throw new OnshapeException("Error while waiting for translation to complete", ex);
         }

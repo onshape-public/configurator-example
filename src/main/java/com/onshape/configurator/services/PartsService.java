@@ -26,6 +26,7 @@ package com.onshape.configurator.services;
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.responses.MetadataGetPartMetadataResponse;
+import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.Appearance;
 import java.util.Map;
@@ -42,17 +43,26 @@ public class PartsService {
         this.onshape = onshape;
     }
 
+    public InputStreamWithHeaders getGeometry(OnshapeDocument document, String partId, String configurationString, String linkDocumentId) throws OnshapeException {
+        return onshape.parts().exportStl()
+                .configuration(configurationString)
+                .mode("text")
+                .units("meter")
+                .linkDocumentId(linkDocumentId)
+                .callToStream(document.getDocumentId(), document.getWVM(), document.getWVMId(), document.getElementId(), partId);
+    }
+
     public Appearance getAppearance(OnshapeDocument document, String partId, String configurationString, String linkDocumentId) throws OnshapeException {
         // Note: The following does not use the client request object as the configuration parameter is missing
         MetadataGetPartMetadataResponse partMeta = onshape.call("get",
                 "/metadata/d/:did/[wvm]/:wvm/e/:eid/p/:pid",
                 null,
-                onshape.buildMap("pid", partId, 
-                        "did", document.getDocumentId(), 
-                        "wvmType", document.getWVM(), 
-                        "wvm", document.getWVMId(), 
+                onshape.buildMap("pid", partId,
+                        "did", document.getDocumentId(),
+                        "wvmType", document.getWVM(),
+                        "wvm", document.getWVMId(),
                         "eid", document.getElementId()),
-                onshape.buildMap("configuration", configurationString, 
+                onshape.buildMap("configuration", configurationString,
                         "linkDocumentId", linkDocumentId),
                 MetadataGetPartMetadataResponse.class);
         Appearance appearance = new Appearance();

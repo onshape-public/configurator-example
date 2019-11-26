@@ -39,4 +39,4 @@ public class ThumbnailsService {
 //    public void getElementThumbnail() {
 //        onshape.thumbnails().getElementThumbnailWithApiConfiguration()
 //    }
-}
+    }
