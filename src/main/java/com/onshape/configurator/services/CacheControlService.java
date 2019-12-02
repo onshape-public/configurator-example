@@ -50,7 +50,7 @@ public class CacheControlService {
             case Microversion:
                 return new EntityTag("m/" + document.getMicroversionId());
             case Version:
-                return new EntityTag("v/" + document.getMicroversionId());
+                return new EntityTag("v/" + document.getVersionId());
             default:
                 return new EntityTag("m/" + this.onshape.documents().getCurrentMicroversion().call(document).getMicroversion());
         }
