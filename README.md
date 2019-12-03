@@ -54,7 +54,7 @@ cd ..
 First build a Docker image called "configurator":
 ```
 cd configurator
-mvn package -DskipTests=true
+mvn package -DskipTests=true -Pdocker
 ```
 
 The following will run the configurator at http://localhost:8080:
