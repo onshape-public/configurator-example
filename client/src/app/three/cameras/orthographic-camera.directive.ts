@@ -22,57 +22,58 @@
  * THE SOFTWARE.
  */
 
-import { Directive, Input, forwardRef, HostListener } from '@angular/core';
-import { AbstractCamera } from './abstract-camera';
+import {Directive, Input, forwardRef, HostListener} from '@angular/core';
+import {AbstractCamera} from './abstract-camera';
 import * as THREE from 'three';
 
 @Directive({
-  selector: 'three-orthographic-camera',
-  providers: [{ provide: AbstractCamera, useExisting: forwardRef(() => OrthographicCameraDirective) }]
+    selector: 'three-orthographic-camera',
+    providers: [{provide: AbstractCamera, useExisting: forwardRef(() => OrthographicCameraDirective)}]
 })
 export class OrthographicCameraDirective extends AbstractCamera<THREE.OrthographicCamera> {
 //https://stackoverflow.com/questions/17558085/three-js-orthographic-camera
-  // @Input() cameraTarget: THREE.Object3D;
+    // @Input() cameraTarget: THREE.Object3D;
 
-  @Input() fov: number;
-  @Input() near = 1;
-  @Input() far = 1000;
+    @Input() fov: number;
+    @Input() near = 0;
+    @Input() far = 1000;
 
-  @Input() positionX: number;
-  @Input() positionY: number;
-  @Input() positionZ: number;
+    @Input() positionX: number;
+    @Input() positionY: number;
+    @Input() positionZ: number;
 
 
-  constructor() {
-    super();
-    console.log('OrthographicCameraDirective.constructor');
-  }
+    constructor() {
+        super();
+        console.log('OrthographicCameraDirective.constructor');
+    }
 
-  protected afterInit(): void {
-    console.log('OrthographicCameraDirective.afterInit');
-    const top = 2;
-    this.camera = new THREE.OrthographicCamera(
-      - top,
-      top,
-      top,
-      -top,
-      -1000
-    );
+    protected afterInit(): void {
+        console.log('OrthographicCameraDirective.afterInit');
+        const top = 2;
+        this.camera = new THREE.OrthographicCamera(
+            -top,
+            top,
+            top,
+            -top,
+            this.near,
+            this.far
+        );
 
-    // Set position and look at
-    this.camera.position.x = this.positionX;
-    this.camera.position.y = this.positionY;
-    this.camera.position.z = this.positionZ;
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    this.camera.updateProjectionMatrix();
-  }
+        // Set position and look at
+        this.camera.position.x = this.positionX;
+        this.camera.position.y = this.positionY;
+        this.camera.position.z = this.positionZ;
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.updateProjectionMatrix();
+    }
 
-  public updateAspectRatio(aspect: number) {
-    console.log('OrthographicCameraDirective.updateAspectRatio: ' + aspect);
-    this.camera.left = - this.camera.top * aspect;
-    this.camera.right = this.camera.top * aspect;
-    this.camera.updateProjectionMatrix();
-  }
+    public updateAspectRatio(aspect: number) {
+        console.log('OrthographicCameraDirective.updateAspectRatio: ' + aspect);
+        this.camera.left = -this.camera.top * aspect;
+        this.camera.right = this.camera.top * aspect;
+        this.camera.updateProjectionMatrix();
+    }
 
 
 }
