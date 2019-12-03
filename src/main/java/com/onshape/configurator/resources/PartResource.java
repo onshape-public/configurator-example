@@ -27,10 +27,9 @@ import com.google.common.io.ByteStreams;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
-import com.onshape.api.types.WVM;
+import com.onshape.configurator.filters.CacheControl;
 import com.onshape.configurator.filters.Compress;
 import com.onshape.configurator.model.Appearance;
-import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.PartsService;
 import com.onshape.configurator.storage.CacheResult;
 import java.io.OutputStream;
@@ -42,9 +41,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -52,45 +49,27 @@ import javax.ws.rs.core.StreamingOutput;
  *
  * @author Peter Harman peter.harman@cae.tech
  */
-@Path("/parts")
+@Path("/parts/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")
 public class PartResource {
 
     @GET
-    @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/p/{part_id}.stl")
+    @Path("/c/{configuration}/p/{part_id}.stl")
     @Compress
+    @CacheControl
     @Produces({"application/sla"})
     public Response getGeometry(
             @Context PartsService partsService,
-            @Context CacheControlService cacheControlService,
-            @Context Request request,
-            @PathParam("document_id") String documentId,
-            @PathParam("wvm") WVM wvm,
-            @PathParam("wvm_id") String wvmId,
-            @PathParam("element_id") String elementId,
+            @PathParam("document") OnshapeDocument document,
             @PathParam("configuration") String configuration,
             @PathParam("part_id") String partId,
             @QueryParam("source") String linkDocumentId) {
         try {
-            // Create an instance of Onshape document for the requested document
-            OnshapeDocument document = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
-                    elementId);
-
-            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
-            EntityTag etag = cacheControlService.getEntityTag(document);
-            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, document, etag);
-            if (responseBuilder != null) {
-                return responseBuilder.build();
-            }
-
             // Fetch the geometry from Onshape, and pass stream directly to response
             InputStreamWithHeaders geometry = partsService.getGeometry(document, partId, configuration, linkDocumentId);
-            return cacheControlService.applyCacheControl(Response.ok((StreamingOutput) (OutputStream output) -> {
+            return Response.ok((StreamingOutput) (OutputStream output) -> {
                 ByteStreams.copy(geometry.getInputStream(), output);
                 output.flush();
-            }, "application/sla"), document, etag)
+            }, "application/sla")
                     .header("Content-Encoding", geometry.getContentEncoding() == null ? "" : geometry.getContentEncoding())
                     .build();
         } catch (OnshapeException ex) {
@@ -101,37 +80,19 @@ public class PartResource {
 
     @GET
     @CacheResult
-    @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/p/{part_id}/appearance")
+    @CacheControl
+    @Path("/c/{configuration}/p/{part_id}/appearance")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAppearance(
             @Context PartsService partsService,
-            @Context CacheControlService cacheControlService,
-            @Context Request request,
-            @PathParam("document_id") String documentId,
-            @PathParam("wvm") WVM wvm,
-            @PathParam("wvm_id") String wvmId,
-            @PathParam("element_id") String elementId,
+            @PathParam("document") OnshapeDocument document,
             @PathParam("configuration") String configuration,
             @PathParam("part_id") String partId,
             @QueryParam("source") String linkDocumentId) {
         try {
-            // Create an instance of Onshape document for the requested document
-            OnshapeDocument document = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
-                    elementId);
-            
-            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
-            EntityTag etag = cacheControlService.getEntityTag(document);
-            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, document, etag);
-            if (responseBuilder != null) {
-                return responseBuilder.build();
-            }
-            
             // Fetch the appearance from Onshape, and return
             Appearance appearance = partsService.getAppearance(document, partId, configuration, linkDocumentId);
-            return cacheControlService.applyCacheControl(Response.ok(appearance), document, etag).build();
+            return Response.ok(appearance).build();
         } catch (OnshapeException ex) {
             Logger.getLogger(PartResource.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(500, ex.getMessage()).build();

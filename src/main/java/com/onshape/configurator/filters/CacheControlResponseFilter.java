@@ -23,43 +23,26 @@
  */
 package com.onshape.configurator.filters;
 
-import com.onshape.api.types.WVM;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
+import java.io.IOException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 
 /**
  *
  * @author Peter Harman peter.harman@cae.tech
  */
-public class WVMConverterProvider implements ParamConverterProvider {
+@CacheControl
+public class CacheControlResponseFilter implements ContainerResponseFilter {
 
     @Override
-    public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
-        if (rawType.equals(WVM.class)) {
-            return (ParamConverter<T>) new WVMConverter();
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        if (requestContext.getProperty("Cache-Control") != null) {
+            responseContext.getHeaders().add("Cache-Control", requestContext.getProperty("Cache-Control"));
         }
-        return null;
-    }
-
-    static class WVMConverter implements ParamConverter<WVM> {
-
-        @Override
-        public WVM fromString(String s) {
-            switch (s.toLowerCase()) {
-                case "v":
-                    return WVM.Version;
-                case "m":
-                    return WVM.Microversion;
-                default:
-                    return WVM.Workspace;
-            }
-        }
-
-        @Override
-        public String toString(WVM wvm) {
-            return wvm.toString();
+        if (requestContext.getProperty("ETag") != null) {
+            responseContext.getHeaders().add("ETag", requestContext.getProperty("ETag"));
         }
     }
+
 }

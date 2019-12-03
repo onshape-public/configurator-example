@@ -29,16 +29,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
+import com.onshape.configurator.filters.CacheControlFilter;
+import com.onshape.configurator.filters.CacheControlResponseFilter;
 import com.onshape.configurator.filters.CompressionFilter;
 import com.onshape.configurator.filters.CompressionWriterInterceptor;
-import com.onshape.configurator.filters.WVMConverterProvider;
+import com.onshape.configurator.filters.OnshapeDocumentConverterProvider;
 import com.onshape.configurator.resources.AssemblyResource;
 import com.onshape.configurator.resources.ConfiguratorResource;
 import com.onshape.configurator.resources.DrawingsResource;
 import com.onshape.configurator.resources.ExportsResource;
 import com.onshape.configurator.resources.PartResource;
 import com.onshape.configurator.services.AssembliesService;
-import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.ConfigurationsService;
 import com.onshape.configurator.services.DrawingsService;
 import com.onshape.configurator.services.ExportsService;
@@ -77,7 +78,9 @@ public class ConfiguratorApplication extends ResourceConfig {
         // Register filters and converters
         register(CompressionFilter.class);
         register(CompressionWriterInterceptor.class);
-        register(WVMConverterProvider.class);
+        register(OnshapeDocumentConverterProvider.class);
+        register(CacheControlFilter.class);
+        register(CacheControlResponseFilter.class);
         register(CacheResultFilter.class);
         register(CacheResultWriterInterceptor.class);
 
@@ -128,14 +131,13 @@ public class ConfiguratorApplication extends ResourceConfig {
 
         @Override
         protected void configure() {
-            bindService(onshape, Onshape.class, RequestScoped.class);
+            bindService(onshape, Onshape.class, Singleton.class);
             bindService(new AssembliesService(onshape), AssembliesService.class, RequestScoped.class);
             bindService(new ConfigurationsService(onshape), ConfigurationsService.class, RequestScoped.class);
             bindService(new DrawingsService(onshape), DrawingsService.class, RequestScoped.class);
             bindService(new ThumbnailsService(onshape), ThumbnailsService.class, RequestScoped.class);
             bindService(new PartsService(onshape), PartsService.class, RequestScoped.class);
             bindService(new ExportsService(onshape), ExportsService.class, RequestScoped.class);
-            bindService(new CacheControlService(onshape), CacheControlService.class, RequestScoped.class);
             bindService(new CacheService(), CacheService.class, Singleton.class);
         }
 

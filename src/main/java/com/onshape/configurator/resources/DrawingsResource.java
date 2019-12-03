@@ -27,9 +27,8 @@ import com.google.common.io.ByteStreams;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
-import com.onshape.api.types.WVM;
+import com.onshape.configurator.filters.CacheControl;
 import com.onshape.configurator.filters.Compress;
-import com.onshape.configurator.services.CacheControlService;
 import com.onshape.configurator.services.DrawingsService;
 import com.onshape.configurator.storage.CacheResult;
 import java.io.OutputStream;
@@ -40,9 +39,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -50,45 +47,29 @@ import javax.ws.rs.core.StreamingOutput;
  *
  * @author Peter Harman peter.harman@cae.tech
  */
-@Path("/drawings")
+@Path("/drawings/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")
 public class DrawingsResource {
 
     @GET
     @CacheResult
+    @CacheControl
     @Compress
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/drawing/{drawing_element_id}")
+    @Path("/drawing/{drawing_element_id}")
     public Response getDrawing(
             @Context DrawingsService drawingsService,
-            @Context CacheControlService cacheControlService,
-            @Context Request request,
-            @PathParam("document_id") String documentId,
-            @PathParam("wvm") WVM wvm,
-            @PathParam("wvm_id") String wvmId,
-            @PathParam("element_id") String elementId,
+            @PathParam("document") OnshapeDocument document,
             @PathParam("drawing_element_id") String drawingElementId) {
         try {
-            // Create instances of Onshape document for the requested document/drawing
-            OnshapeDocument assembly = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
-                    elementId);
-            OnshapeDocument drawing = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
+            // Create instance of Onshape document for the requested drawing
+            OnshapeDocument drawing = new OnshapeDocument(document.getDocumentId(),
+                    document.getWorkspaceId(),
+                    document.getVersionId(),
+                    document.getMicroversionId(),
                     drawingElementId);
 
-            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
-            EntityTag etag = cacheControlService.getEntityTag(assembly);
-            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, assembly, etag);
-            if (responseBuilder != null) {
-                return responseBuilder.build();
-            }
-
             // Fetch the drawing from Onshape, and return
-            return cacheControlService.applyCacheControl(Response.ok(drawingsService.getDrawing(assembly, drawing)), assembly, etag).build();
+            return Response.ok(drawingsService.getDrawing(document, drawing)).build();
         } catch (OnshapeException ex) {
             Logger.getLogger(ConfiguratorResource.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(500, ex.getMessage()).build();
@@ -96,45 +77,29 @@ public class DrawingsResource {
     }
 
     @GET
+    @CacheControl
     @Produces({"application/pdf"})
-    @Path("/d/{document_id}/{wvm}/{wvm_id}/e/{element_id}/c/{configuration}/drawing/{drawing_element_id}.pdf")
+    @Path("/c/{configuration}/drawing/{drawing_element_id}.pdf")
     public Response getPDF(
             @Context DrawingsService drawingsService,
-            @Context CacheControlService cacheControlService,
-            @Context Request request,
-            @PathParam("document_id") String documentId,
-            @PathParam("wvm") WVM wvm,
-            @PathParam("wvm_id") String wvmId,
-            @PathParam("element_id") String elementId,
+            @PathParam("document") OnshapeDocument document,
             @PathParam("configuration") String configuration,
             @PathParam("drawing_element_id") String drawingElementId) {
         try {
-            // Create instances of Onshape document for the requested document/drawing
-            OnshapeDocument assembly = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
-                    elementId);
-            OnshapeDocument drawing = new OnshapeDocument(documentId,
-                    wvm == WVM.Workspace ? wvmId : null,
-                    wvm == WVM.Version ? wvmId : null,
-                    wvm == WVM.Microversion ? wvmId : null,
+            // Create instance of Onshape document for the requested drawing
+            OnshapeDocument drawing = new OnshapeDocument(document.getDocumentId(),
+                    document.getWorkspaceId(),
+                    document.getVersionId(),
+                    document.getMicroversionId(),
                     drawingElementId);
 
-            // Get an ETag and compare to the ETag in the request, respond with 304 if matching
-            EntityTag etag = cacheControlService.getEntityTag(assembly);
-            Response.ResponseBuilder responseBuilder = cacheControlService.evaluatePreconditions(request, assembly, etag);
-            if (responseBuilder != null) {
-                return responseBuilder.build();
-            }
-
             // Fetch the drawing from Onshape, pass stream directly to response
-            InputStreamWithHeaders export = drawingsService.getConfiguredDrawing(assembly, drawing, configuration);
-            return cacheControlService.applyCacheControl(Response.ok((StreamingOutput) (OutputStream output) -> {
+            InputStreamWithHeaders export = drawingsService.getConfiguredDrawing(document, drawing, configuration);
+            return Response.ok((StreamingOutput) (OutputStream output) -> {
                 ByteStreams.copy(export.getInputStream(), output);
                 output.flush();
             }, "application/pdf")
-                    .header("Content-Encoding", export.getContentEncoding() == null ? "" : export.getContentEncoding()), assembly, etag)
+                    .header("Content-Encoding", export.getContentEncoding() == null ? "" : export.getContentEncoding())
                     .build();
         } catch (OnshapeException ex) {
             Logger.getLogger(ConfiguratorResource.class.getName()).log(Level.SEVERE, null, ex);
