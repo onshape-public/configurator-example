@@ -51,20 +51,25 @@ export class OrthographicCameraDirective extends AbstractCamera<THREE.Orthograph
     protected afterInit(): void {
         console.log('OrthographicCameraDirective.afterInit');
         const top = 2;
-        this.camera = new THREE.OrthographicCamera(
-            -top,
-            top,
-            top,
-            -top,
-            this.near,
-            this.far
-        );
+        if (!this.camera) {
+            this.camera = new THREE.OrthographicCamera(
+                -top,
+                top,
+                top,
+                -top,
+                this.near,
+                this.far
+            );
+        }
 
         // Set position and look at
         this.camera.position.x = this.positionX;
         this.camera.position.y = this.positionY;
         this.camera.position.z = this.positionZ;
+        this.camera.near = this.near;
+        this.camera.far = this.far;
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera.updateMatrixWorld();
         this.camera.updateProjectionMatrix();
     }
 

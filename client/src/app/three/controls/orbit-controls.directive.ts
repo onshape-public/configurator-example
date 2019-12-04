@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
  import {
   AfterViewInit,
   ContentChildren,
@@ -106,8 +106,8 @@ export class OrbitControlsDirective implements AfterViewInit, OnChanges, OnDestr
     );
     this.controls.rotateSpeed = this.rotateSpeed;
     this.controls.zoomSpeed = this.zoomSpeed;
-    this.controls.addEventListener('change', this.childRenderers.first.render);
-    this.childRenderers.first.render();
+    // this.controls.addEventListener('change', this.childRenderers.first.render);
+    // this.childRenderers.first.render();
   }
 
   ngAfterViewInit(): void {

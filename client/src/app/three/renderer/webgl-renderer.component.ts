@@ -29,16 +29,21 @@ import {
     ElementRef,
     ContentChild,
     HostListener,
-    AfterViewInit, AfterContentInit, NgZone, ChangeDetectorRef
+    AfterViewInit, AfterContentInit, NgZone, ChangeDetectorRef, ContentChildren, EventEmitter, QueryList
 } from '@angular/core';
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import {SceneDirective} from '../objects/scene.directive';
 import {AbstractCamera} from '../cameras/abstract-camera';
 import {RendererListener} from './renderer-listener';
-import {fromEvent} from 'rxjs';
+import {fromEvent, Subject} from 'rxjs';
 import {auditTime} from 'rxjs/operators';
 import {SelectionManager} from './selection-manager';
-import {OrthographicCamera} from 'three';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
+import {AbstractObject3D} from '../objects/abstract-object-3d';
+import {AbstractMaterial} from '../objects/abstract-material';
+import {AbstractPass} from './passes/abstract-pass';
+import {Pass} from 'three/examples/jsm/postprocessing/Pass';
 
 
 @Component({
@@ -49,6 +54,7 @@ import {OrthographicCamera} from 'three';
 export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
 
     private renderer: THREE.WebGLRenderer;
+    private composer: EffectComposer;
     private viewInitialized = false;
     private loading: boolean;
     private rendererListeners: Set<RendererListener>;
@@ -61,13 +67,15 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
     private selectionManager: SelectionManager;
     @ViewChild('canvas', {static: true})
     private canvasRef: ElementRef;
+    public selectionChange = new Subject<AbstractObject3D<THREE.Object3D>[]>();
+    public hoverChange = new Subject<AbstractObject3D<THREE.Object3D>[]>();
 
     @ContentChild(SceneDirective, {static: true}) sceneComponent: SceneDirective;
     @ContentChild(AbstractCamera, {static: true}) cameraComponent: AbstractCamera<THREE.Camera>;
+    @ContentChildren(AbstractPass, {descendants: false}) passes: QueryList<AbstractPass<Pass>>;
 
     constructor(private zone: NgZone, private changeDetector: ChangeDetectorRef) {
         console.log('RendererComponent.constructor');
-        this.render = this.render.bind(this);
         this.loading = true;
         this.rendererListeners = new Set<RendererListener>();
         this.progressMap = new Map<String, number>();
@@ -110,11 +118,15 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
         return this.canvasRef.nativeElement;
     }
 
+    public getSize(): THREE.Vector2 {
+        return new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight);
+    }
+
     private startRendering() {
         console.log('RendererComponent.startRendering');
         this.sceneComponent.setRendererComponent(this);
         this.clock.start();
-        this.selectionManager = new SelectionManager(this.sceneComponent);
+        this.selectionManager = new SelectionManager(this.sceneComponent, this.selectionChange, this.hoverChange);
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true
@@ -127,6 +139,11 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
         this.renderer.setClearColor(0xffffff, 1);
         this.renderer.autoClear = true;
 
+        // Build a chain of passes for rendering
+        this.composer = new EffectComposer(this.renderer);
+        this.composer.addPass(new RenderPass(this.getScene(), this.getCamera()));
+        this.passes.forEach((pass) => this.composer.addPass(pass.setup(this)));
+
         this.zone.runOutsideAngular(() => {
             fromEvent(this.canvasRef.nativeElement, 'mousemove').pipe(auditTime(100)).subscribe(event => {
                 this.mouse.x = (event['clientX'] / this.canvasRef.nativeElement.width) * 2 - 1;
@@ -138,9 +155,7 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
                     .sort((a, b) => a.distance - b.distance)
                     .map((intersection) => intersection.object)
                     .filter((v, i, a) => a.indexOf(v) === i);
-                this.selectionManager.setHovered(components
-                    .map((component) => this.sceneComponent.find(component))
-                    .filter((component) => component != null));
+                this.selectionManager.setHovered(components);
             });
             fromEvent(this.canvasRef.nativeElement, 'click').subscribe(event => {
                 console.log(event);
@@ -151,13 +166,9 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
                 this.raycaster.intersectObjects(this.getScene().children, true, newHovered);
                 const components = newHovered.map((intersection) => intersection.object).filter((v, i, a) => a.indexOf(v) === i);
                 if (event['ctrlKey']) {
-                    this.selectionManager.addSelected(components
-                        .map((component) => this.sceneComponent.find(component))
-                        .filter((component) => component != null));
+                    this.selectionManager.toggleSelected(components);
                 } else {
-                    this.selectionManager.setSelected(components
-                        .map((component) => this.sceneComponent.find(component))
-                        .filter((component) => component != null));
+                    this.selectionManager.setSelected(components);
                 }
             });
         });
@@ -169,22 +180,10 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
         });
     }
 
-    public render() {
-        if (this.viewInitialized) {
-            this.renderer.render(this.getScene(), this.getCamera());
-            //this.raycaster.setFromCamera(this.mouse, this.getCamera());
-            //this.renderer.render(this.getScene(), this.getCamera());
-            //this.hovered.length = 0;
-            //this.raycaster.intersectObjects(this.getScene().children, true, this.hovered);
-            //console.log(this.hovered);
-            // this.rendererListeners.forEach(rl => rl.onRender());
-        }
-    }
-
     private doRender() {
         const delta = this.clock.getDelta();
         this.rendererListeners.forEach((rl) => rl.onRender(delta));
-        this.renderer.render(this.getScene(), this.getCamera());
+        this.composer.render(delta);
         requestAnimationFrame(this.doRender.bind(this));
     }
 
@@ -216,7 +215,7 @@ export class WebGLRendererComponent implements AfterViewInit, AfterContentInit {
         this.updateChildCamerasAspectRatio();
 
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-        this.render();
+        this.composer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
     }
 
     public updateChildCamerasAspectRatio() {

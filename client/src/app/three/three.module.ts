@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrbitControlsDirective } from './controls/orbit-controls.directive';
@@ -49,6 +49,8 @@ import {OrthographicCameraDirective} from './cameras/orthographic-camera.directi
 import {AmbientLightDirective} from './objects/light/ambient-light.directive';
 import {DirectionalLightDirective} from './objects/light/directional-light.directive';
 import {CameraHelperDirective} from './objects/helpers/camera-helper.directive';
+import { OutlinePassDirective } from './renderer/passes/outline-pass.directive';
+import { FxaaPassDirective } from './renderer/passes/fxaa-pass.directive';
 
 @NgModule({
   imports: [
@@ -76,31 +78,35 @@ import {CameraHelperDirective} from './objects/helpers/camera-helper.directive';
     TorusmeshDirective,
     SpheremeshDirective,
     PlanemeshDirective,
-    EmptyDirective
+    EmptyDirective,
+    OutlinePassDirective,
+    FxaaPassDirective
   ],
-  exports: [
-    OrbitControlsDirective,
-    ObjLoaderDirective,
-    StlLoaderDirective,
-    Rad2DegPipe,
-    Deg2RadPipe,
-    PerspectiveCameraDirective,
-    OrthographicCameraDirective,
-    WebGLRendererComponent,
-    SceneDirective,
-    AxesHelperDirective,
-    GridHelperDirective,
-    CameraHelperDirective,
-    ObjectLoaderDirective,
-    PointLightDirective,
-    AmbientLightDirective,
-    DirectionalLightDirective,
-    CylindermeshDirective,
-    TorusmeshDirective,
-    SpheremeshDirective,
-    PlanemeshDirective,
-    EmptyDirective
-  ]
+    exports: [
+        OrbitControlsDirective,
+        ObjLoaderDirective,
+        StlLoaderDirective,
+        Rad2DegPipe,
+        Deg2RadPipe,
+        PerspectiveCameraDirective,
+        OrthographicCameraDirective,
+        WebGLRendererComponent,
+        SceneDirective,
+        AxesHelperDirective,
+        GridHelperDirective,
+        CameraHelperDirective,
+        ObjectLoaderDirective,
+        PointLightDirective,
+        AmbientLightDirective,
+        DirectionalLightDirective,
+        CylindermeshDirective,
+        TorusmeshDirective,
+        SpheremeshDirective,
+        PlanemeshDirective,
+        EmptyDirective,
+        OutlinePassDirective,
+        FxaaPassDirective
+    ]
 })
 export class ThreeModule {
   constructor() {

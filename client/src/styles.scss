@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     margin: 0px;
+    background-color: aquamarine;
 }
 
 $fa-font-path : '~font-awesome/fonts';
@@ -10,3 +11,4 @@ $fa-font-path : '~font-awesome/fonts';
 @import '~bootstrap/scss/bootstrap-grid';
 
 @import "~@ng-select/ng-select/themes/default.theme.css";
+

@@ -22,81 +22,82 @@
  * THE SOFTWARE.
  */
 import {Component, Input, OnChanges, OnDestroy, forwardRef, SimpleChanges} from '@angular/core';
-import { AbstractTool } from '../abstract-tool';
+import {AbstractTool} from '../abstract-tool';
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
 @Component({
-  selector: 'app-camera-controls',
-  templateUrl: './camera-controls.component.html',
-  styleUrls: ['./camera-controls.component.scss'],
-  providers: [{provide: AbstractTool, useExisting: forwardRef(() => CameraControlsComponent)}]
+    selector: 'app-camera-controls',
+    templateUrl: './camera-controls.component.html',
+    styleUrls: ['./camera-controls.component.scss'],
+    providers: [{provide: AbstractTool, useExisting: forwardRef(() => CameraControlsComponent)}]
 })
 export class CameraControlsComponent extends AbstractTool implements OnChanges, OnDestroy {
-  @Input() zoomToFit = true;
-  @Input() zoomToFitInitial = false;
-  @Input() button = true;
+    @Input() zoomToFit = true;
+    @Input() zoomToFitInitial = false;
+    @Input() button = true;
 
-  private controls: CameraControls;
+    private controls: CameraControls;
 
-  constructor() {
-    super('Camera Controls', 'navigation', true, true);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // If the THREE.js OrbitControls are not set up yet, we do not need to update
-    // anything as they will pick the new values from the @Input properties automatically
-    // upon creation.
-    if (!this.controls) {
-      return;
+    constructor() {
+        super('Camera Controls', 'navigation', true, true);
     }
 
-    if (changes['listeningControlElement']) {
-      // The DOM element the OrbitControls listen on cannot be changed once an
-      // OrbitControls object is created. We thus need to recreate it.
-      this.controls.dispose();
-      this.setUpCameraControls();
+    ngOnChanges(changes: SimpleChanges) {
+        // If the THREE.js OrbitControls are not set up yet, we do not need to update
+        // anything as they will pick the new values from the @Input properties automatically
+        // upon creation.
+        if (!this.controls) {
+            return;
+        }
+
+        if (changes['listeningControlElement']) {
+            // The DOM element the OrbitControls listen on cannot be changed once an
+            // OrbitControls object is created. We thus need to recreate it.
+            this.controls.dispose();
+            this.setUpCameraControls();
+        }
     }
-  }
 
-  ngOnDestroy() {
-    this.controls.dispose();
-  }
-
-  private setUpCameraControls() {
-    console.log('Starting Camera Controls');
-    CameraControls.install({THREE: THREE});
-    this.controls = new CameraControls(
-      this.getRendererComponent().getCamera() as THREE.PerspectiveCamera | THREE.OrthographicCamera,
-      this.getRendererComponent().canvas
-    );
-    this.controls.addEventListener('update', this.renderer.render);
-    // Following line seems to trigger controls to start, unsure why
-    this.controls.addEventListener('control', () => {});
-    if (this.zoomToFitInitial) {
-      this.doZoomToFit();
+    ngOnDestroy() {
+        this.controls.dispose();
     }
-    this.renderer.render();
-  }
 
-  onStartRendering() {
-    super.onStartRendering();
-    this.setUpCameraControls();
-  }
-
-  onRender(delta: number) {
-    super.onRender(delta);
-    this.controls.update(delta);
-  }
-
-  public doZoomToFit() {
-    const bbox = new THREE.Box3().setFromObject(this.getRendererComponent().getScene());
-    if (this.getRendererComponent().getCamera() instanceof THREE.PerspectiveCamera) {
-      this.controls.fitTo(bbox, true);
-    } else {
-      const camera = this.getRendererComponent().getCamera() as THREE.OrthographicCamera;
-      const sphere = new THREE.Sphere();
-      bbox.getBoundingSphere(sphere);
+    private setUpCameraControls() {
+        console.log('Starting Camera Controls');
+        CameraControls.install({THREE: THREE});
+        this.controls = new CameraControls(
+            this.getRendererComponent().getCamera() as THREE.PerspectiveCamera | THREE.OrthographicCamera,
+            this.getRendererComponent().canvas
+        );
+        this.controls.addEventListener('update', () => {
+        });
+        // Following line seems to trigger controls to start, unsure why
+        this.controls.addEventListener('control', () => {
+        });
+        if (this.zoomToFitInitial) {
+            this.doZoomToFit();
+        }
     }
-  }
+
+    onStartRendering() {
+        super.onStartRendering();
+        this.setUpCameraControls();
+    }
+
+    onRender(delta: number) {
+        super.onRender(delta);
+        this.controls.update(delta);
+    }
+
+    public doZoomToFit() {
+        const bbox = new THREE.Box3().setFromObject(this.getRendererComponent().getScene());
+        if (this.getRendererComponent().getCamera() instanceof THREE.PerspectiveCamera) {
+            this.controls.fitTo(bbox, true);
+        } else {
+            const camera = this.getRendererComponent().getCamera() as THREE.OrthographicCamera;
+            const sphere = new THREE.Sphere();
+            bbox.getBoundingSphere(sphere);
+        }
+    }
 }
