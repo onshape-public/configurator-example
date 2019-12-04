@@ -67,6 +67,7 @@ public abstract class ConfigurationParameter {
 
     @JsonIgnore
     public abstract String getDefaultValueExpression();
+
     @Override
     public String toString() {
         return Onshape.toString(this);

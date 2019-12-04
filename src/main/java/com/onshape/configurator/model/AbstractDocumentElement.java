@@ -28,7 +28,8 @@ import com.onshape.api.types.OnshapeDocument;
 import com.onshape.api.types.WVM;
 
 /**
- *
+ * Base class for objects that reference an Onshape document
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class AbstractDocumentElement {

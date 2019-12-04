@@ -28,7 +28,8 @@ import com.onshape.api.Onshape;
 import java.math.BigDecimal;
 
 /**
- *
+ * A real parameter with units
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ConfigurationParameterQuantity extends ConfigurationParameter {

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * Represents an Onshape document with a set of configurable parameters
  *
  * @author Peter Harman peter.harman@cae.tech
  */
@@ -38,6 +39,7 @@ public class Configurator extends AbstractDocumentElement {
     public Collection<ConfigurationParameter> getParameters() {
         return parameters;
     }
+
     @Override
     public String toString() {
         return Onshape.toString(this);

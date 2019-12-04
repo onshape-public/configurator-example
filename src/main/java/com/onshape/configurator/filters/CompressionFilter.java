@@ -30,7 +30,10 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
 /**
- *
+ * Response filter that sets the Content-Encoding response header to gzip if 
+ * the Accept-Encoding request header allows it. Only applied where the Compress
+ * annotation has been set
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Provider

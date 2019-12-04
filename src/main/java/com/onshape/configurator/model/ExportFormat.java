@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onshape.api.Onshape;
 
 /**
- *
+ * A format that an Onshape assembly can be converted to
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ExportFormat {

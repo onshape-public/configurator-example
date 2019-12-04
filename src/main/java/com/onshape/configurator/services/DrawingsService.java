@@ -23,6 +23,7 @@
  */
 package com.onshape.configurator.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.responses.AppElementsResolveReferencesResponse;
@@ -30,15 +31,14 @@ import com.onshape.api.responses.AppElementsResolveReferencesResponseResolvedRef
 import com.onshape.api.responses.AppElementsUpdateReferenceResponse;
 import com.onshape.api.responses.DocumentsGetElementListResponseElements;
 import com.onshape.api.responses.DrawingsCreateTranslationResponse;
-import com.onshape.api.types.Blob;
 import com.onshape.api.types.InputStreamWithHeaders;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.ConfigurableDrawing;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -62,6 +62,54 @@ public class DrawingsService {
         this.documentLockService = DocumentLockService.getInstance(onshape);
     }
 
+    /**
+     * Get drawing elements that link to the given assembly
+     *
+     * @param assembly
+     * @return
+     * @throws com.onshape.api.exceptions.OnshapeException
+     */
+    public Collection<ConfigurableDrawing> getDrawings(OnshapeDocument assembly) throws OnshapeException {
+        Collection<ConfigurableDrawing> out = new ArrayList<>();
+        
+        // Note this does not use the request object as the "dataType" field is undocumented
+        JsonNode elements = onshape.call("get", "/documents/d/:did/[wvm]/:wvm/elements", null,
+                onshape.buildMap("did", assembly.getDocumentId(), "wvmType", assembly.getWVM(), "wvm", assembly.getWVMId()),
+                onshape.buildMap("elementType", "APPLICATION"), JsonNode.class);
+        for (int i = 0; i < elements.size(); i++) {
+            JsonNode element = elements.get(i);
+            // Check that it is a drawing
+            if ("onshape-app/drawing".equals(element.get("dataType").asText())) {
+                // Resolve the references to identify those that relate to the assembly
+                AppElementsResolveReferencesResponse resolvedReferences = onshape.appElements().resolveReferences()
+                        .call(assembly.getDocumentId(), assembly.getWVM(), assembly.getWVMId(), element.get("id").asText());
+
+                // Check that there are configurable references to the assembly
+                boolean ofAssembly = Stream.of(resolvedReferences.getResolvedReferences())
+                        .filter((resolvedReference) -> resolvedReference.getIsConfigurable()
+                        && resolvedReference.getTargetDocumentId().equals(assembly.getDocumentId())
+                        && resolvedReference.getTargetElementId().equals(assembly.getElementId()))
+                        .count() > 0;
+                if (ofAssembly) {
+                    ConfigurableDrawing cd = new ConfigurableDrawing();
+                    cd.setFromDocument(assembly);
+                    cd.setElementId(element.get("id").asText());
+                    cd.setName(element.get("name").asText());
+                    out.add(cd);
+                }
+            }
+        }
+        return out;
+    }
+    
+    /**
+     * Get details of the given drawing element
+     *
+     * @param assembly
+     * @param drawing
+     * @return
+     * @throws OnshapeException
+     */
     public ConfigurableDrawing getDrawing(OnshapeDocument assembly, OnshapeDocument drawing) throws OnshapeException {
         ConfigurableDrawing cd = new ConfigurableDrawing();
         DocumentsGetElementListResponseElements element = onshape.documents().getElementList()
@@ -71,6 +119,16 @@ public class DrawingsService {
         return cd;
     }
 
+    /**
+     * Export a PDF of a drawing. Note that this requires writing to the
+     * document.
+     *
+     * @param assembly
+     * @param drawingElement
+     * @param configuration
+     * @return
+     * @throws OnshapeException
+     */
     public InputStreamWithHeaders getConfiguredDrawing(OnshapeDocument assembly, OnshapeDocument drawingElement, String configuration) throws OnshapeException {
         // Replace versioned references with editable Workspace
         final OnshapeDocument drawing = documentLockService.getWritable(drawingElement);

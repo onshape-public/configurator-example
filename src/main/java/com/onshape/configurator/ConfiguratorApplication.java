@@ -62,7 +62,8 @@ import org.glassfish.jersey.process.internal.RequestScoped;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
- *
+ * JAX-RS application for the configurator.
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @ApplicationPath("api")

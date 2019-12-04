@@ -41,7 +41,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * REST method for fetching assembly structure for document and configuration
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Path("/assemblies/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")

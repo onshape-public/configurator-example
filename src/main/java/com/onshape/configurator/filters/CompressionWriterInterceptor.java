@@ -32,7 +32,9 @@ import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
 
 /**
- *
+ * Writer interceptor that uses gzip compression on the response output stream if
+ * the Content-Encoding response header has been set to gzip
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Priority(10)

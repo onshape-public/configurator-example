@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * Represents a single configuration, with a value for each parameter
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class Configuration {

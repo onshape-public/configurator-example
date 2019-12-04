@@ -24,19 +24,23 @@
 package com.onshape.configurator.filters;
 
 import java.io.IOException;
+import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 
 /**
+ * Response filter that applies the Cache-Control and ETag headers
  *
  * @author Peter Harman peter.harman@cae.tech
  */
 @CacheControl
+@Priority(9)
 public class CacheControlResponseFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        // If the CacheControlFilter set the Cache-Control and ETag properties apply them as headers in the response
         if (requestContext.getProperty("Cache-Control") != null) {
             responseContext.getHeaders().add("Cache-Control", requestContext.getProperty("Cache-Control"));
         }

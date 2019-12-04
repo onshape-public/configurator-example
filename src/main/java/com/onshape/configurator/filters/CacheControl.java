@@ -29,7 +29,7 @@ import javax.enterprise.util.Nonbinding;
 import javax.ws.rs.NameBinding;
 
 /**
- * Use this annotation on methods that we wish to apply compression to.
+ * Use this annotation on methods that we wish to apply Cache-Control to.
  *
  * @author Peter Harman peter.harman@cae.tech
  */

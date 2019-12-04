@@ -27,6 +27,7 @@ import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
 import com.onshape.api.types.OnshapeDocument;
 import java.io.IOException;
+import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
@@ -35,10 +36,13 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 /**
- *
+ * Request filter that determines an ETag for the document, and rejects with a 304
+ * response if no change has occurred.
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @CacheControl
+@Priority(1)
 public class CacheControlFilter implements ContainerRequestFilter {
 
     public static final int ONE_HOUR = 60 * 60;
@@ -84,6 +88,12 @@ public class CacheControlFilter implements ContainerRequestFilter {
         }
     }
 
+    /**
+     * Get the Onshape document referenced by this resource
+     * 
+     * @param requestContext
+     * @return 
+     */
     protected OnshapeDocument getDocument(ContainerRequestContext requestContext) {
         String documentPath = requestContext.getUriInfo().getPathParameters().getFirst(getAnnotation().document());
         if (documentPath != null && !documentPath.isEmpty()) {
@@ -92,6 +102,14 @@ public class CacheControlFilter implements ContainerRequestFilter {
         return null;
     }
 
+    /**
+     * Determine an ETag - using the Version or Microversion, or fetching the current
+     * Microversion for Workspace references
+     * 
+     * @param document
+     * @return
+     * @throws OnshapeException 
+     */
     protected EntityTag getEntityTag(OnshapeDocument document) throws OnshapeException {
         switch (document.getWVM()) {
             case Microversion:
@@ -103,6 +121,11 @@ public class CacheControlFilter implements ContainerRequestFilter {
         }
     }
 
+    /**
+     * Get the instance of the CacheControl annotation
+     * 
+     * @return 
+     */
     protected CacheControl getAnnotation() {
         CacheControl cc = resourceInfo.getResourceMethod().getAnnotation(CacheControl.class);
         if (cc == null) {

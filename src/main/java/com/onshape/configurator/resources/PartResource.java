@@ -46,7 +46,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 /**
- *
+ * REST method for fetching part geometry and appearance for given document, part 
+ * and configuration
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Path("/parts/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")

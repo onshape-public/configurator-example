@@ -43,7 +43,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 /**
- *
+ * REST methods for exporting assembly structure for document and configuration
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Path("/exports")

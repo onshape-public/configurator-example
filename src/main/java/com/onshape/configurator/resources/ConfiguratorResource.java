@@ -41,7 +41,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * REST method for fetching a configurator for a document
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 @Path("/configurator/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")

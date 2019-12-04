@@ -25,10 +25,6 @@ package com.onshape.configurator.services;
 
 import com.onshape.api.Onshape;
 import com.onshape.api.exceptions.OnshapeException;
-import com.onshape.api.requests.ElementsEncodeConfigurationRequestParameters;
-import com.onshape.api.responses.ElementsDecodeConfigurationStringResponse;
-import com.onshape.api.responses.ElementsDecodeConfigurationStringResponseParameters;
-import com.onshape.api.responses.ElementsEncodeConfigurationResponse;
 import com.onshape.api.responses.ElementsGetConfigurationResponse;
 import com.onshape.api.types.OnshapeDocument;
 import com.onshape.configurator.model.Configuration;
@@ -68,7 +64,6 @@ public class ConfigurationsService {
                 configurator.getParameters().add(configurationParameter);
             }
         }
-
         return configurator;
     }
 
@@ -120,40 +115,40 @@ public class ConfigurationsService {
         });
         return configuration;
     }
-
-    public Configuration decodeConfiguration(OnshapeDocument document, String configurationId, String source) throws OnshapeException {
-        Configuration configuration = new Configuration();
-        ElementsDecodeConfigurationStringResponse response = onshape.elements().decodeConfigurationString()
-                .configurationIsId(Boolean.TRUE)
-                .includeDisplay(Boolean.TRUE)
-                .linkDocumentId(source)
-                .call(document, configurationId);
-        for (ElementsDecodeConfigurationStringResponseParameters parameter : response.getParameters()) {
-
-        }
-        return configuration;
-    }
-
-    /**
-     *
-     * @param document
-     * @param configuration
-     * @param source
-     * @return
-     * @throws OnshapeException
-     */
-    public String encodeConfiguration(OnshapeDocument document, Configuration configuration, String source) throws OnshapeException {
-        ElementsEncodeConfigurationRequestParameters[] parameters = new ElementsEncodeConfigurationRequestParameters[configuration.getValues().size()];
-        int i = 0;
-        for (ParameterValue parameterValue : configuration.getValues()) {
-            parameters[i++] = ElementsEncodeConfigurationRequestParameters.builder()
-                    .parameterId(parameterValue.getParameter())
-                    .parameterValue(parameterValue.getValue()).build();
-        }
-        ElementsEncodeConfigurationResponse response = onshape.elements().encodeConfiguration()
-                .linkDocumentId(source)
-                .parameters(parameters)
-                .versionId(document.getVersionId()).call(document);
-        return response.getEncodedId();
-    }
+//
+//    public Configuration decodeConfiguration(OnshapeDocument document, String configurationId, String source) throws OnshapeException {
+//        Configuration configuration = new Configuration();
+//        ElementsDecodeConfigurationStringResponse response = onshape.elements().decodeConfigurationString()
+//                .configurationIsId(Boolean.TRUE)
+//                .includeDisplay(Boolean.TRUE)
+//                .linkDocumentId(source)
+//                .call(document, configurationId);
+//        for (ElementsDecodeConfigurationStringResponseParameters parameter : response.getParameters()) {
+//
+//        }
+//        return configuration;
+//    }
+//
+//    /**
+//     *
+//     * @param document
+//     * @param configuration
+//     * @param source
+//     * @return
+//     * @throws OnshapeException
+//     */
+//    public String encodeConfiguration(OnshapeDocument document, Configuration configuration, String source) throws OnshapeException {
+//        ElementsEncodeConfigurationRequestParameters[] parameters = new ElementsEncodeConfigurationRequestParameters[configuration.getValues().size()];
+//        int i = 0;
+//        for (ParameterValue parameterValue : configuration.getValues()) {
+//            parameters[i++] = ElementsEncodeConfigurationRequestParameters.builder()
+//                    .parameterId(parameterValue.getParameter())
+//                    .parameterValue(parameterValue.getValue()).build();
+//        }
+//        ElementsEncodeConfigurationResponse response = onshape.elements().encodeConfiguration()
+//                .linkDocumentId(source)
+//                .parameters(parameters)
+//                .versionId(document.getVersionId()).call(document);
+//        return response.getEncodedId();
+//    }
 }

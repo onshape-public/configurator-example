@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * An enumeration parameter with a set of selectable options
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ConfigurationParameterEnum extends ConfigurationParameter {

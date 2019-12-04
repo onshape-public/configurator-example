@@ -29,7 +29,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * Represents an assembly hierarchy for a given configuration. The collection of
+ * parts and subassemblies might change between configurations, or the configurations
+ * of each part might change
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ConfiguredAssembly extends AbstractDocumentElement {
@@ -67,7 +70,11 @@ public class ConfiguredAssembly extends AbstractDocumentElement {
         this.boundingBox = boundingBox;
     }
 
+    /**
+     * A bounding-box for the assembly
+     */
     public static class BoundingBox {
+
         @JsonProperty
         private Number lowX;
         @JsonProperty
@@ -130,6 +137,9 @@ public class ConfiguredAssembly extends AbstractDocumentElement {
         }
     }
 
+    /**
+     * A sub-assembly in the assembly hierarchy
+     */
     public static class SubAssembly {
 
         @JsonProperty

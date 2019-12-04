@@ -33,6 +33,8 @@ import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 
 /**
+ * Converter providers that allow WVM and OnshapeDocument to be used as
+ * PathParam objects
  *
  * @author Peter Harman peter.harman@cae.tech
  */
@@ -52,6 +54,9 @@ public class OnshapeDocumentConverterProvider implements ParamConverterProvider 
         return null;
     }
 
+    /**
+     * Converter from String to WVM
+     */
     public static class WVMConverter implements ParamConverter<WVM> {
 
         WVMConverter() {
@@ -75,6 +80,9 @@ public class OnshapeDocumentConverterProvider implements ParamConverterProvider 
         }
     }
 
+    /**
+     * Converter from String to OnshapeDocument
+     */
     public static class OnshapeDocumentConverter implements ParamConverter<OnshapeDocument> {
 
         private static final Pattern PATTERN = Pattern.compile("^d\\/([^\\/]+)\\/(w|v|m)\\/([^\\/]+)\\/e\\/([^\\/]+)$");

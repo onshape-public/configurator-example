@@ -44,11 +44,30 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 /**
+ * REST methods for fetching details of a drawing or exporting the drawing for
+ * given document and configuration
  *
  * @author Peter Harman peter.harman@cae.tech
  */
 @Path("/drawings/{document: d\\/[^\\/]+\\/(?:w|v|m)\\/[^\\/]+\\/e\\/[^\\/]+}")
 public class DrawingsResource {
+
+    @GET
+    @CacheResult
+    @CacheControl
+    @Compress
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getDrawings(
+            @Context DrawingsService drawingsService,
+            @PathParam("document") OnshapeDocument document) {
+        try {
+            // Fetch the drawing from Onshape, and return
+            return Response.ok(drawingsService.getDrawings(document)).build();
+        } catch (OnshapeException ex) {
+            Logger.getLogger(ConfiguratorResource.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(500, ex.getMessage()).build();
+        }
+    }
 
     @GET
     @CacheResult

@@ -32,7 +32,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
+ * Service to lock a single client to write-access for a document (NOTE: This is
+ * only needed for drawing export, and is only required because currently the
+ * Onshape API methods for this require multiple write steps to the document and
+ * hence cannot be used concurrently, this will change in a future release)
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class DocumentLockService {

@@ -26,7 +26,8 @@ package com.onshape.configurator.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
+ * A single name-value pair (i.e. configuration) for a parameter
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ParameterValue {

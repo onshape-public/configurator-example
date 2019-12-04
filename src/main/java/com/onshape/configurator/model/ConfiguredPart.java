@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onshape.api.Onshape;
 
 /**
- *
+ * A part in an assembly for a given configuration
+ * 
  * @author Peter Harman peter.harman@cae.tech
  */
 public class ConfiguredPart extends AbstractDocumentElement {
