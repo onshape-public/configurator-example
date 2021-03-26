@@ -61,6 +61,12 @@ public class ExportsService {
     }
 
     public InputStream export(OnshapeDocument document, String configuration, String format) throws OnshapeException {
+//        if("GLTF".equals(format.toUpperCase())){
+//            System.out.println("it's a GLTF");
+//
+//        }
+                    System.out.println(format);
+
         try {
             // Start the translation process
             CompletableFuture<AssembliesCreateTranslationResponse> exportFuture
