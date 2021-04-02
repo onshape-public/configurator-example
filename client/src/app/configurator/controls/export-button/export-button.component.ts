@@ -27,7 +27,7 @@ export class ExportButtonComponent implements OnInit {
     this.http.get('/api/exports/formats').subscribe({
       next: (formats) => {
         const exportFormats = formats as ExportFormat[];
-        exportFormats.forEach((format) => this.formats.push(format));
+        exportFormats.forEach((format) => { if(!(format.name==="JT")) {this.formats.push(format);}});
         this.inProgress = false;
       },
       error: (err) => { this.inProgress = false; }

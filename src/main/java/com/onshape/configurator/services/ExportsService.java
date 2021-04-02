@@ -65,7 +65,7 @@ public class ExportsService {
             // Start the translation process
             CompletableFuture<AssembliesCreateTranslationResponse> exportFuture
                     = onshape.call("post", "/assemblies/d/:did/[wv]/:wv/e/:eid/translations",
-                            onshape.buildMap("formatName", format.toUpperCase(), "storeInDocument", Boolean.FALSE, "configuration", configuration),
+                            onshape.buildMap("formatName", format.toUpperCase(), "storeInDocument", Boolean.FALSE, "configuration", configuration, "resolution", "medium", "includeExportIds", Boolean.TRUE,  "angularTolerance", 0.1090830782496456, "distanceTolerance", 0.00012, "linkDocumentWorkspaceId", "","maximumChordLength",10),
                             onshape.buildMap("did", document.getDocumentId(), "wvType", document.getWV(), "wv", document.getWVId(), "eid", document.getElementId()),
                             onshape.buildMap(),
                             AssembliesCreateTranslationResponse.class).asFuture(onshape);
