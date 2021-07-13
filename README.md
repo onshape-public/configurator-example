@@ -36,7 +36,6 @@ ONSHAPE_API_SECRETKEY
 Run the server:
 
 ```
-cd configurator
 mvn jetty:stop jetty:run
 cd ..
 ```
@@ -53,7 +52,6 @@ cd ..
 
 First build a Docker image called "configurator":
 ```
-cd configurator
 mvn package -DskipTests=true
 ```
 
