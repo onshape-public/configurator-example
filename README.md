@@ -58,5 +58,5 @@ mvn package -DskipTests=true
 The following will run the configurator at http://localhost:8080:
 
 ```
-docker run -d -p 8080:8080 configurator -e ONSHAPE_API_ACCESSKEY -e ONSHAPE_API_SECRETKEY
+docker run -d -p 8080:8080 -e ONSHAPE_API_ACCESSKEY -e ONSHAPE_API_SECRETKEY configurator
 ```
