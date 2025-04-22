@@ -110,7 +110,21 @@ export class ConfiguratorComponent implements OnInit, OnChanges {
   }
 
   parameterValueChange(parameterValue: ParameterValue) {
-    this.configurationChange.emit(this.configuration);
+    const idx = this.configuration.values.findIndex(v => v.parameter === parameterValue.parameter);
+    if (idx >= 0) {
+      // Replace the ParameterValue object to trigger Angular change detection on child inputs
+      const oldVal = this.configuration.values[idx];
+      const updatedVal: ParameterValue = {
+        parameter: oldVal.parameter,
+        value: String(parameterValue.value)
+      };
+      this.configuration.values[idx] = updatedVal;
+      // Emit the updated configuration and apply changes
+      this.configurationChange.emit(this.configuration);
+      this.updateAssembly();
+    } else {
+      console.warn(`Received update for unknown parameter id: ${parameterValue.parameter}`);
+    }
   }
 
   quantityParameter(parameter: ConfigurationParameter): ConfigurationParameterQuantity {
