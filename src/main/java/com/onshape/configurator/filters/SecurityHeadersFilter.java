@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
  * clickjacking and other security vulnerabilities.
  */
 public class SecurityHeadersFilter implements Filter {
+    private static final String ALLOWED_FRAME_ANCESTORS = "https://*.onshape.com";
+    private static final String ALLOWED_FRAME_ANCESTOR = "https://onshape.com";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -51,12 +53,12 @@ public class SecurityHeadersFilter implements Filter {
         
         // Content-Security-Policy frame-ancestors is the modern replacement for X-Frame-Options
         // It allows wildcard subdomains and multiple domains
-        httpResponse.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://*.onshape.com");
+        httpResponse.setHeader("Content-Security-Policy", "frame-ancestors 'self' " + ALLOWED_FRAME_ANCESTORS);
         
         // X-Frame-Options as fallback for older browsers (does not support wildcards)
         // Note: ALLOW-FROM is deprecated and not supported in modern browsers, but some legacy browsers still use it
         // For better compatibility with wildcard domains, Content-Security-Policy is preferred
-        httpResponse.setHeader("X-Frame-Options", "ALLOW-FROM https://onshape.com");
+        httpResponse.setHeader("X-Frame-Options", "ALLOW-FROM " + ALLOWED_FRAME_ANCESTOR);
         
         // Additional security headers
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
