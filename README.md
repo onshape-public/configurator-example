@@ -30,8 +30,21 @@ You will need the following environment variables defined with the access key an
 ONSHAPE_API_ACCESSKEY
 ONSHAPE_API_SECRETKEY
 
+# How to run: Docker
+
+First build a Docker image called "configurator":
+```
+mvn package -DskipTests=true
+```
+
+The following will run the configurator at http://localhost:8080:
+
+```
+docker run -d -p 8080:8080 -e ONSHAPE_API_ACCESSKEY -e ONSHAPE_API_SECRETKEY configurator
+```
 
 # How to run: development
+_This section may not work with the latest gradle toolchain. Prefer docker build instead (above)_
 
 Run the server:
 
@@ -46,17 +59,4 @@ Run the client, the following will build and run the client and launch the brows
 cd client
 npm run start
 cd ..
-```
-
-# Docker
-
-First build a Docker image called "configurator":
-```
-mvn package -DskipTests=true
-```
-
-The following will run the configurator at http://localhost:8080:
-
-```
-docker run -d -p 8080:8080 -e ONSHAPE_API_ACCESSKEY -e ONSHAPE_API_SECRETKEY configurator
 ```

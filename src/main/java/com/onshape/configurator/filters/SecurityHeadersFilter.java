@@ -32,6 +32,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet filter that adds security headers to all HTTP responses to protect against
+ * clickjacking and other security vulnerabilities.
+ */
 public class SecurityHeadersFilter implements Filter {
 
     @Override
