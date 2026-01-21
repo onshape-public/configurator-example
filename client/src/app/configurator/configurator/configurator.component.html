@@ -29,7 +29,11 @@
     <app-progress></app-progress>
   </three-toolbar>
   <three-toolbar placement="Right">
-    <!-- meta data -->
+    <app-chat 
+      [configurator]="configurator"
+      [configuration]="configuration" 
+      (updateConfiguration)="parameterValueChange($event)">
+    </app-chat>
   </three-toolbar>
   <three-toolbar placement="Top">
     <app-export-button [documentId]="documentId"

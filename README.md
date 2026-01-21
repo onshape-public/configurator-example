@@ -8,6 +8,8 @@ The application comprises a Java server and an Angular client. The server uses t
 
 As well as configurators, this could be used as the basis of a range of applications that use Onshape as a platform for engineering data - such as fetching geometry of a given configuration for CAE analyses, or providing 3D views of products in an online catalog.
 
+![Screenshot of the app running](./configurator-with-chat.png)
+
 
 # Before anything
 
