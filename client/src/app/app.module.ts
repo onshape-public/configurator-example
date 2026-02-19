@@ -13,6 +13,7 @@ import { ConfiguratorModule } from './configurator/configurator.module';
 import { ThreeToolsModule } from './three-tools/three-tools.module';
 import { ThreeModule } from './three/three.module';
 import { AppRoutingModule } from './app-routing/app-routing.module';
+import { ChatModule } from './chat/chat.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
     FontAwesomeModule,
     ThreeToolsModule,
     ThreeModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ChatModule
   ],
   providers: [],
   bootstrap: [AppComponent]

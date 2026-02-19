@@ -1,0 +1,126 @@
+<div class="chat-wrapper">
+  <!-- Floating Action Button -->
+  <button 
+    *ngIf="!isExpanded" 
+    class="chat-fab" 
+    (click)="toggleChat()"
+    title="Chat with AI Assistant"
+  >
+    <!-- Chat SVG Icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon">
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+  </button>
+
+  <!-- Chat Container -->
+  <div class="chat-container" *ngIf="isExpanded">
+    <!-- API Key Modal -->
+    <div class="modal" *ngIf="showModal">
+      <div class="modal-content">
+        <h3>Enter Anthropic API Key</h3>
+        <p>To use the AI chat feature, please enter your Anthropic API key:</p>
+        <input 
+          type="text" 
+          [(ngModel)]="apiKey" 
+          placeholder="API Key" 
+          class="form-control"
+        />
+        <button 
+          (click)="handleApiKeySubmit()" 
+          class="btn btn-primary mt-3"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <h4>AI Assistant</h4>
+      <div class="header-buttons">
+        <button 
+          *ngIf="!showModal" 
+          class="btn btn-sm" 
+          (click)="showModal = true"
+          title="Change API Key"
+        >
+          <!-- Key SVG Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-square-icon">
+            <path d="M12.4 2.7a2.5 2.5 0 0 1 3.4 0l5.5 5.5a2.5 2.5 0 0 1 0 3.4l-3.7 3.7a2.5 2.5 0 0 1-3.4 0L8.7 9.8a2.5 2.5 0 0 1 0-3.4z"/>
+            <path d="m14 7 3 3"/>
+            <path d="m9.4 10.6-6.814 6.814A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814"/>
+          </svg>
+        </button>
+        <button
+          class="btn btn-sm"
+          (click)="toggleApiJson()"
+          title="Show/Hide API JSON"
+        >
+          <!-- Code SVG Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-icon">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </button>
+        <button 
+          class="btn btn-sm" 
+          (click)="toggleChat()"
+          title="Close Chat"
+        >
+          <!-- Close (X) SVG Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- API JSON Viewer -->
+    <div class="json-viewer" *ngIf="showApiJson">
+      <div class="json-viewer-tabs">
+        <button class="json-tab" [class.active]="jsonTab === 'request'" (click)="jsonTab = 'request'">Request</button>
+        <button class="json-tab" [class.active]="jsonTab === 'response'" (click)="jsonTab = 'response'">Response</button>
+      </div>
+      <pre class="json-content" *ngIf="jsonTab === 'request'">{{ lastApiRequest }}</pre>
+      <pre class="json-content" *ngIf="jsonTab === 'response'">{{ lastApiResponse }}</pre>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container" [ngClass]="{'with-json-viewer': showApiJson}">
+      <div 
+        *ngFor="let message of messages" 
+        class="message" 
+        [ngClass]="{'user-message': message.role === 'user', 'assistant-message': message.role === 'assistant'}"
+      >
+        <div class="message-content">
+          <p [innerHTML]="message.content"></p>
+        </div>
+      </div>
+      <div *ngIf="loading" class="loading-indicator">
+        <span>Thinking...</span>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <textarea 
+        [(ngModel)]="inputMessage" 
+        placeholder="Ask about configuring the model..." 
+        class="form-control"
+        (keydown.enter)="sendMessage(); $event.preventDefault()"
+      ></textarea>
+      <button 
+        (click)="sendMessage()" 
+        [disabled]="loading || !inputMessage.trim()" 
+        class="btn btn-primary send-button"
+      >
+        <!-- Send SVG Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <polyline points="16 6 22 12 16 18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

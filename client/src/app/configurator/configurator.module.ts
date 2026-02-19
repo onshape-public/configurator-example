@@ -21,6 +21,7 @@ import { ExportButtonComponent } from './controls/export-button/export-button.co
 import { NgbDropdownModule, NgbTooltipModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { DrawingButtonComponent } from './controls/drawing-button/drawing-button.component';
 import { OnshapeButtonComponent } from './controls/onshape-button/onshape-button.component';
+import { ChatModule } from '../chat/chat.module';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { OnshapeButtonComponent } from './controls/onshape-button/onshape-button
     FontAwesomeModule,
     NgbDropdownModule,
     NgbTooltipModule,
-    NgbProgressbarModule
+    NgbProgressbarModule,
+    ChatModule
   ]
 })
 export class ConfiguratorModule {
